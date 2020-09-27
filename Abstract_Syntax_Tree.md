@@ -1,4 +1,4 @@
-<Abstract Syntax Tree> 
+Abstract Syntax Tree
 
 1. What is Abstract Syntax Tree(AST)? 
 - AST is a tree representation of the abstract syntactic structure of source code written in a programming language. 
