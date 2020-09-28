@@ -32,9 +32,18 @@ module Basics where
 
 
 -- | Add an integer to itself.
-double = undefined
+double :: Int -> Int
+double x = x + x
 
 -- | Is this integer zero?
+isZero :: Int -> Bool
+isZero 0 = True
+isZero _ = False
+
+
+isNonZero :: Int -> Bool
+isNonZero x = not (isZero x)
+
 isZero = undefined
 
 -- | Is this integer non-zero?
