@@ -8,3 +8,8 @@
 - A good use case of Syntactic Sugar makes code base easier to read and less error-prone. 
 - Generally, fewer lines of code are less likely to prompt bugs, so it is encouraged to write an elegant code style using Syntactic Sugar. 
 (Source: https://en.wikipedia.org/wiki/Syntactic_sugar)
+
+3. Syntatic Sugar in Haskell
+- In Haskell, strings are just lists of characters. 
+- For example, "hello" is just syntactic sugar for ['h','e','l','l','o']. Because strings are lists, we can use list functions on them, which is really handy.
+(Source: http://learnyouahaskell.com/starting-out)
