@@ -39,23 +39,22 @@ double x = x + x
 isZero :: Int -> Bool
 isZero 0 = True
 isZero _ = False
-
-
-isNonZero :: Int -> Bool
-isNonZero x = not (isZero x)
-
-isZero = undefined
+-- isZero x = x == 0
 
 -- | Is this integer non-zero?
-isNonZero = undefined
+isNonZero :: Int -> Bool
+isNonZero 0 = False
+isNonZero _ = True
+-- isNonZero x = x /= 0
 
 -- | Computes the average of two numbers.
 avg :: Float -> Float -> Float
-avg = undefined
+avg _ 0 = Null
+avg x y = (x + y) / 2
 
 -- | Uses avg to compute half of a number.
 half :: Float -> Float
-half = undefined
+half x = avg (x, 0)
 
 
 -- In GHCi:
@@ -85,15 +84,21 @@ data Result
 
 -- | Safely divide two integers.
 safeDiv :: Int -> Int -> Result
-safeDiv = undefined
+safeDiv _ 0 = Error
+safeDiv x y = OK (x `div` y)
 
 -- | Add two results.
 addResults :: Result -> Result -> Result
-addResults = undefined
+addResults (OK i) (OK j) = OK (i + j)
+addResults _       _     = Error
 
 -- | Get the integer from an OK result, or return 0 on an error.
 fromResult :: Result -> Int
-fromResult = undefined
+-- fromResult (OK i) = i
+-- fromResult Error = 0
+fromResult r = case r of
+                Error -> 0
+                OK i -> i
 
 
 -- The definition of Bool in the Haskell Prelude looks like this:
@@ -111,20 +116,24 @@ fromResult = undefined
 
 -- | An example of a recursive data type.
 data List
-   = Nil
-   | Cons Int List
+   = Nil -- empty list
+   | Cons Int List -- non-empty list
   deriving (Eq,Show)
 
 -- | The empty list.
 l0 :: List
-l0 = undefined
+l0 = Nil
 
 -- | The list: [1,2,3]
 l1 :: List
-l1 = undefined
+l1 = Cons 1 (Cons 2 (Cons 3 Nil))
 
 -- | Compute the length of a list.
-listLength = undefined
+listLength :: List -> Int
+listLength Nil     = 0
+listLength (Cons h t) = 1 +listLength t -- heads (Int) and tails (List)
 
 -- | Compute the sum of the integers in a list.
-listSum = undefined
+listSum :: [Int] -> Int
+listSum [] = 0
+listSum (h:t) = h + sum t
