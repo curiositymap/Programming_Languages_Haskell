@@ -30,14 +30,13 @@ e2 = Mul (Add (Lit 7) (Lit 6)) (Lit 5)
 -- | The expresssion: 3 * 2 + 5 * 4
 --   Make sure to take standard operator precedence into account.
 e3 :: Expr
-e3 = Add (Mul (Lit 3) (Lit 2)) (Mul (Lit 5)(Lit 4))
- undefined
+e3 = Add (Mul (Lit 3) (Lit 2)) (Mul (Lit 5) (Lit 4))
 
 
 -- | The expression: 8 + 7 * 9 + 6
 --   Make sure to take standard operator precedence into account.
 e4 :: Expr
-e4 = undefined
+e4 = Add (Lit 8) (Add (Mul (Lit 7) (Lit 9)) (Lit 6))
 
 
 -- | The leftmost literal in an expression.
@@ -52,7 +51,9 @@ e4 = undefined
 --   7
 --
 leftLit :: Expr -> Int
-leftLit = undefined
+leftLit (Lit l) = l
+leftLit (Add e _) = leftLit e
+leftLit (Mul e _) = leftLit e
 
 
 -- | The rightmost literal in an expression.
@@ -67,7 +68,9 @@ leftLit = undefined
 --   6
 --
 rightLit :: Expr -> Int
-rightLit = undefined
+rightLit (Lit l) = l
+rightLit (Add _ e) = rightLit e
+rightLit (Mul _ e) = rightLit e
 
 
 -- | Get the maximum literal value in an expression.
@@ -88,8 +91,13 @@ rightLit = undefined
 --   9
 --
 maxLit :: Expr -> Int
-maxLit = undefined
+maxLit (Lit l) = l
+maxLit (Add el er) = maxLitBetween el er
+maxLit (Mul el er) = maxLitBetween el er
 
+-- Helper function to compare two values
+maxLitBetween :: Expr -> Expr -> Int
+maxLitBetween el er = (let x = maxLit el in (let y = maxLit er in (if x > y then x else y)))
 
 -- | The integer result of evaluating an expression.
 --
@@ -109,7 +117,9 @@ maxLit = undefined
 --   77
 --
 eval :: Expr -> Int
-eval = undefined
+eval (Lit l) = l
+eval (Add el er) = (eval el) + (eval er)
+eval (Mul el er) = (eval el) * (eval er)
 
 
 -- | Render an expression as a string (called "pretty printing").
@@ -142,4 +152,6 @@ eval = undefined
 --   "(2 + 3 * 4) * (7 + 6) * 5"
 --
 pretty :: Expr -> String
-pretty = undefined
+pretty (Lit l) = show l
+pretty (Add l r) = "(" ++ (pretty l) ++ " + " ++ (pretty r) ++ ")"
+pretty (Mul l r) = (pretty l) ++ " * " ++ (pretty r)
