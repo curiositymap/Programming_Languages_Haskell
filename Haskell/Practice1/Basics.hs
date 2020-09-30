@@ -37,24 +37,28 @@ double x = x + x
 
 -- | Is this integer zero?
 isZero :: Int -> Bool
+-- isZero x = x == 0
 isZero 0 = True
 isZero _ = False
--- isZero x = x == 0
 
 -- | Is this integer non-zero?
 isNonZero :: Int -> Bool
-isNonZero 0 = False
-isNonZero _ = True
 -- isNonZero x = x /= 0
+-- isNonZero 0 = False
+-- isNonZero _ = True
+-- is NonZero x = not (isZero x)
+isNonZero = not . isZero
 
 -- | Computes the average of two numbers.
 avg :: Float -> Float -> Float
-avg _ 0 = Null
-avg x y = (x + y) / 2
+avg x y = (x + y) / 2.0
 
 -- | Uses avg to compute half of a number.
 half :: Float -> Float
-half x = avg (x, 0)
+half x = avg 0 x
+
+(+++) :: Int -> Int -> Int
+(+++) x y = 3 * x + 3 * y
 
 
 -- In GHCi:
@@ -89,16 +93,13 @@ safeDiv x y = OK (x `div` y)
 
 -- | Add two results.
 addResults :: Result -> Result -> Result
-addResults (OK i) (OK j) = OK (i + j)
+addResults (OK x) (OK y) = OK (x + y)
 addResults _       _     = Error
 
 -- | Get the integer from an OK result, or return 0 on an error.
 fromResult :: Result -> Int
--- fromResult (OK i) = i
--- fromResult Error = 0
-fromResult r = case r of
-                Error -> 0
-                OK i -> i
+fromResult (OK x) = x
+fromResult Error = 0
 
 
 -- The definition of Bool in the Haskell Prelude looks like this:
@@ -129,6 +130,7 @@ l1 :: List
 l1 = Cons 1 (Cons 2 (Cons 3 Nil))
 
 -- | Compute the length of a list.
+-- PATTERN MATCHING
 listLength :: List -> Int
 listLength Nil     = 0
 listLength (Cons h t) = 1 +listLength t -- heads (Int) and tails (List)
