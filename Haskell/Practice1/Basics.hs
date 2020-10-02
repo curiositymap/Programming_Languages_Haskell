@@ -133,9 +133,9 @@ l1 = Cons 1 (Cons 2 (Cons 3 Nil))
 -- PATTERN MATCHING
 listLength :: List -> Int
 listLength Nil     = 0
-listLength (Cons h t) = 1 +listLength t -- heads (Int) and tails (List)
+listLength (Cons _ t) = 1 + listLength t -- heads (Int) and tails (List)
 
 -- | Compute the sum of the integers in a list.
-listSum :: [Int] -> Int
-listSum [] = 0
-listSum (h:t) = h + sum t
+listSum :: List -> Int
+listSum Nil = 0
+listSum (Cons h t) = h + listSum t
