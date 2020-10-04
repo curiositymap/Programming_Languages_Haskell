@@ -79,14 +79,10 @@ fromRPN s = head (go [] (words s))
 --   >>> eval (neg e2)
 --   -65
 --
--- | Map a function over the elements in a list.
-map :: (a -> b) -> [a] -> [b]
-map f [] = []
-map f (h:t) = f h : map f t
 
--- | Reimplement doubleAll using map.
-neg :: [Expr] -> [Expr]
-neg = map(\x ->"-1"++x)
+neg :: Expr -> Expr
+neg x = Mul (Lit (-1)) x
+
 
 -- | Takes two expressions and returns an expression that evaluates to the
 --   second expression subtracted from the first. Once again, note that the
