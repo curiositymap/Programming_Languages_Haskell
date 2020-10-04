@@ -86,7 +86,13 @@ notAll' = map not
 -- | Fold a function over the elements in a list.
 foldr :: (a -> b -> b) -> b -> [a] -> b
 foldr f x [] = x -- the base case
-foldr f x (h:t) = f h (foldr f x t) -- f will combine the head and recursive result
+foldr f x (h:t) = f h (foldr f x t) -- f will combine the head and recursive result (Standard Fold Right)
+
+--- Variation Fold Left
+
+foldleft :: (b -> a -> b) -> b -> [a] -> b
+foldleft f z []    = z
+foldleft f z (h:t) = foldleft f (f z h) t -- named the function 'foldleft' since prelude module contains foldl
 
 
 -- | Reimplement sum using foldr.
