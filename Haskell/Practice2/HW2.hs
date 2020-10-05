@@ -93,9 +93,6 @@ neg x = Mul (Lit (-1)) x
 --
 --   >>> eval (sub e2 e1)
 --   51
---
--- sub :: Expr -> Expr
 
-
-
---- USE FOLDR
+sub :: Expr -> Expr -> Expr
+sub x y = Add x (Mul (Lit (-1)) y)
