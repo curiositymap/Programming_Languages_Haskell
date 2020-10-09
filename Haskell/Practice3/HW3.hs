@@ -21,7 +21,7 @@ compress xs = compressor (reverse xs) []
               compressor :: Eq a => [a] -> [(Int, a)] -> [(Int, a)]
               compressor [] ts = ts
               compressor (x:xs) [] = compressor xs [(1,x)]
-              compressor (x:xs) ((ti, tx): ts) = if tx = x
+              compressor (x:xs) ((ti, tx): ts) = if tx == x
                          then compressor xs ((1 + ti, tx):ts)
                          else compressor xs ((1,x) : (ti,tx) : ts)
 
@@ -70,7 +70,9 @@ four = Succ three
 --   >>> pred three
 --   Succ (Succ Zero)
 --
-pred = undefined
+pred :: Nat -> Nat
+pred Zero      = Zero
+pred (Succ x)  = x
 
 
 -- | True if the given value is zero.
@@ -81,7 +83,9 @@ pred = undefined
 --   >>> isZero two
 --   False
 --
-isZero = undefined
+isZero :: Nat -> Bool
+isZero Zero = True
+isZero _    = False
 
 
 -- | Convert a natural number to an integer. NOTE: We use this function in
@@ -93,7 +97,9 @@ isZero = undefined
 --   >>> toInt three
 --   3
 --
-toInt = undefined
+toInt :: Nat -> Int
+toInt Zero     = 0
+toInt (Succ x) = 1 + toInt x
 
 
 -- | Add two natural numbers.
@@ -110,7 +116,11 @@ toInt = undefined
 --   >>> add two three == add three two
 --   True
 --
-add = undefined
+add :: Nat -> Nat -> Nat
+add Zero  Zero        = Zero
+add Zero (Succ x)     = Succ(add Zero x)
+add (Succ x) Zero     = Succ(add Zero x)
+add (Succ x) (Succ y) = Succ(Succ(add x y))
 
 
 -- | Subtract the second natural number from the first. Return zero
@@ -128,7 +138,10 @@ add = undefined
 --   >>> sub one three
 --   Zero
 --
-sub = undefined
+sub :: Nat -> Nat -> Nat
+sub Zero      _       = Zero
+sub n         Zero    = n
+sub (Succ n) (Succ m) = sub n m
 
 
 -- | Is the left value greater than the right?
@@ -142,7 +155,10 @@ sub = undefined
 --   >>> gt two two
 --   False
 --
-gt = undefined
+gt :: Nat -> Nat -> Bool
+gt Zero      _       = False
+gt _         Zero    = True
+gt (Succ n) (Succ m) = gt n m
 
 
 -- | Multiply two natural numbers.
@@ -159,7 +175,9 @@ gt = undefined
 --   >>> toInt (mult three three)
 --   9
 --
-mult = undefined
+mult :: Nat -> Nat -> Nat
+mult Zero     _    = Zero
+mult (Succ n) m    = add m (mult n m)
 
 
 -- | Compute the sum of a list of natural numbers.
@@ -173,7 +191,8 @@ mult = undefined
 --   >>> toInt (sum [one,two,three])
 --   6
 --
-sum = undefined
+sum :: [Nat] -> Nat
+sum = foldr add Zero
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -184,4 +203,5 @@ sum = undefined
 --   >>> toInt (sum (take 100 odds))
 --   10000
 --
-odds = undefined
+odds :: [Nat]
+odds = one : map (add two) odds
