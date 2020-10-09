@@ -16,7 +16,14 @@ import Prelude hiding (Enum(..), sum)
 --   [(1,'M'),(1,'i'),(2,'s'),(1,'i'),(2,'s'),(1,'i'),(2,'p'),(1,'i')]
 --
 compress :: Eq a => [a] -> [(Int,a)]
-compress = undefined
+compress xs = compressor (reverse xs) []
+         where
+              compressor :: Eq a => [a] -> [(Int, a)] -> [(Int, a)]
+              compressor [] ts = ts
+              compressor (x:xs) [] = compressor xs [(1,x)]
+              compressor (x:xs) ((ti, tx): ts) = if tx = x
+                         then compressor xs ((1 + ti, tx):ts)
+                         else compressor xs ((1,x) : (ti,tx) : ts)
 
 -- | Convert a run-length list back into a regular list.
 --
@@ -24,7 +31,8 @@ compress = undefined
 --   "aaaaabbbccccabb"
 --
 decompress :: [(Int,a)] -> [a]
-decompress = undefined
+decompress [] = []
+decompress ((x,y): rest) = (replicate x y) ++ decompress rest
 
 
 --
