@@ -1,6 +1,7 @@
 module HW3 where
 
 import Prelude hiding (Enum(..), sum)
+import Data.List
 
 
 --
@@ -16,14 +17,18 @@ import Prelude hiding (Enum(..), sum)
 --   [(1,'M'),(1,'i'),(2,'s'),(1,'i'),(2,'s'),(1,'i'),(2,'p'),(1,'i')]
 --
 compress :: Eq a => [a] -> [(Int,a)]
-compress xs = compressor (reverse xs) []
-         where
-              compressor :: Eq a => [a] -> [(Int, a)] -> [(Int, a)]
-              compressor [] ts = ts
-              compressor (x:xs) [] = compressor xs [(1,x)]
-              compressor (x:xs) ((ti, tx): ts) = if tx == x
-                         then compressor xs ((1 + ti, tx):ts)
-                         else compressor xs ((1,x) : (ti,tx) : ts)
+compress = map entry . group
+ where entry xs = (length xs, head xs)
+
+
+-- compress xs = compressor (reverse xs) []
+         -- where
+         --      compressor :: Eq a => [a] -> [(Int, a)] -> [(Int, a)]
+         --      compressor [] ts = ts
+         --      compressor (x:xs) [] = compressor xs [(1,x)]
+         --      compressor (x:xs) ((ti, tx): ts) = if tx == x
+         --                 then compressor xs ((1 + ti, tx):ts)
+         --                 else compressor xs ((1,x) : (ti,tx) : ts)
 
 -- | Convert a run-length list back into a regular list.
 --
@@ -31,8 +36,11 @@ compress xs = compressor (reverse xs) []
 --   "aaaaabbbccccabb"
 --
 decompress :: [(Int,a)] -> [a]
-decompress [] = []
-decompress ((x,y): rest) = (replicate x y) ++ decompress rest
+decompress = concatMap (uncurry replicate) -- equivalent to the code below
+-- decompress = concatMap (\(n, a) -> replicate n a)
+
+-- decompress []            = []
+-- decompress ((n,a): t) = replicate n a ++ decompress t -- replicate 'a' n times
 
 
 --
@@ -117,10 +125,14 @@ toInt (Succ x) = 1 + toInt x
 --   True
 --
 add :: Nat -> Nat -> Nat
-add Zero  Zero        = Zero
-add Zero (Succ x)     = Succ(add Zero x)
-add (Succ x) Zero     = Succ(add Zero x)
-add (Succ x) (Succ y) = Succ(Succ(add x y))
+add Zero      m   =  m
+add (Succ n)  m   = add n (Succ m) -- pealing off until it gets to zero
+-- Write move argument from left to right
+
+-- add Zero  Zero        = Zero
+-- add Zero (Succ x)     = Succ(add Zero x)
+-- add (Succ x) Zero     = Succ(add Zero x)
+-- add (Succ x) (Succ y) = Succ(Succ(add x y))
 
 
 -- | Subtract the second natural number from the first. Return zero
@@ -141,7 +153,7 @@ add (Succ x) (Succ y) = Succ(Succ(add x y))
 sub :: Nat -> Nat -> Nat
 sub Zero      _       = Zero
 sub n         Zero    = n
-sub (Succ n) (Succ m) = sub n m
+sub (Succ n) (Succ m) = sub n m -- recursive case: peal off both arguments
 
 
 -- | Is the left value greater than the right?
@@ -177,7 +189,7 @@ gt (Succ n) (Succ m) = gt n m
 --
 mult :: Nat -> Nat -> Nat
 mult Zero     _    = Zero
-mult (Succ n) m    = add m (mult n m)
+mult (Succ n) m    = add m (mult n m) -- we are only pattern matching on the left argument
 
 
 -- | Compute the sum of a list of natural numbers.
@@ -203,5 +215,9 @@ sum = foldr add Zero
 --   >>> toInt (sum (take 100 odds))
 --   10000
 --
-odds :: [Nat]
-odds = one : map (add two) odds
+odds :: [Nat] -- the type is a list of natural numbers
+odds = one : map (add two) odds -- one followed (concatenated)
+
+
+-- map _ []     = []
+-- map f (x:xs) = f x : map f xs
