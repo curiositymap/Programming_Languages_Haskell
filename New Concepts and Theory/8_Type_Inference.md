@@ -1,4 +1,4 @@
-i# Type Inference
+# Type Inference
 
 ### How to determine type classes? 
 
@@ -14,3 +14,35 @@ Additionally, the type of the result should be equivalent to the outcome of e1e2
 ---- This unification step is particularly tricky. However, it's heavily used in type inference. 
 
 If there's any of these steps fails, a type error occurs. 
+
+
+
+Type Inference Exercise: 
+
+Prelude> :t Just
+Just :: a -> Maybe a
+Prelude> :t not even 3
+
+<interactive>:1:1: error:
+    • Couldn't match expected type ‘t0 -> t’ with actual type ‘Bool’
+    • The function ‘not’ is applied to two arguments,
+      but its type ‘Bool -> Bool’ has only one
+      In the expression: not even 3
+
+<interactive>:1:5: error:
+    • Couldn't match expected type ‘Bool’ with actual type ‘a0 -> Bool’
+    • Probable cause: ‘even’ is applied to too few arguments
+      In the first argument of ‘not’, namely ‘even’
+      In the expression: not even 3
+Prelude> :t not (even 3)
+not (even 3) :: Bool
+Prelude> :t not . even
+not . even :: Integral a => a -> Bool
+Prelude> :t even . not
+
+<interactive>:1:1: error:
+    • No instance for (Integral Bool) arising from a use of ‘even’
+    • In the first argument of ‘(.)’, namely ‘even’
+      In the expression: even . not
+Prelude> :t map (Just . even)
+map (Just . even) :: Integral a => [a] -> [Maybe Bool]
