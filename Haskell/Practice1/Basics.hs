@@ -50,13 +50,18 @@ isNonZero :: Int -> Bool
 isNonZero = not . isZero
 
 -- | Computes the average of two numbers.
-avg :: Float -> Float -> Float
+avg :: Float -> (Float -> Float) -- take a float and return a function that turns a float to a float
 avg x y = (x + y) / 2.0
 
 -- | Uses avg to compute half of a number.
 half :: Float -> Float
-half x = avg 0 x
+-- half x = avg 0 x
+half = avg 0
 
+
+-- Randomly assigned operator
+-- 1. Identify the type (Input: Int -> Int, Output: Int)
+-- 2. Specify the procedure & pattern match (Input: Int (x) -> Int (y), Output: 3 * x + 3 * y)
 (+++) :: Int -> Int -> Int
 (+++) x y = 3 * x + 3 * y
 
@@ -65,8 +70,12 @@ half x = avg 0 x
 --  * infix vs. prefix application: operators are just functions!
 --    * (+) x y = x + y
 --    * avg x y = x `avg` y
---  * anonymous functions
-
+--  * anonymous functions : functions represented as a value
+-- \x y -> x + y
+-- The function above means that it takes two arguments and returns the sum of thems
+-- you can apply this in the same line
+-- inline calculation example below
+-- (\x y -> x + y) 4 5
 
 ----------------------
 -- Basic Data Types --
@@ -81,9 +90,9 @@ half x = avg 0 x
 --   * top-level and case-expressions
 
 -- | An example data type with two cases.
-data Result
-   = OK Int
-   | Error
+data Result -- Result is a new data type
+   = OK Int -- OK is a data constructor, and argument Int follows that returns Result
+   | Error -- Error is a data constructor.
   deriving (Eq,Show)
 
 -- | Safely divide two integers.
@@ -116,6 +125,8 @@ fromResult Error = 0
 -- * recursive functions
 
 -- | An example of a recursive data type.
+-- Arbitrary names for data constructor
+-- However, the data type you want to pass to data constructor is given (e.g., Int, Bool, etc.)
 data List
    = Nil -- empty list
    | Cons Int List -- non-empty list
@@ -131,11 +142,11 @@ l1 = Cons 1 (Cons 2 (Cons 3 Nil))
 
 -- | Compute the length of a list.
 -- PATTERN MATCHING
-listLength :: List -> Int
-listLength Nil     = 0
-listLength (Cons _ t) = 1 + listLength t -- heads (Int) and tails (List)
+listLength :: List -> Int -- always pattern match the "List" you defined above
+listLength Nil        = 0 -- Two cases corresponding to List is Nill and Cons
+listLength (Cons h t) = 1 + listLength t -- heads (Int) and tails (List)
 
 -- | Compute the sum of the integers in a list.
-listSum :: List -> Int
-listSum Nil = 0
+listSum :: List -> Int -- the argument coming in as an instance of data type
+listSum Nil        = 0 -- there are two data cases under List, which are Nill and Cons
 listSum (Cons h t) = h + listSum t

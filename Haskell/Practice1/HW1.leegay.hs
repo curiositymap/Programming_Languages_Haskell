@@ -10,6 +10,8 @@ module HW1 where
 --   multiplaction nodes. Note that this data structure is an "abstract
 --   syntax tree", which is something we will spend more time talking about
 --   later in the course.
+
+-- In HW1, Expr is like "List" data type excpet that it has three constructors.
 data Expr
    = Lit Int         -- ^ Literal integers
    | Add Expr Expr   -- ^ Addition expressions

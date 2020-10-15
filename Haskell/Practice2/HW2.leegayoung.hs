@@ -4,7 +4,6 @@ module HW2 where
 
 import HW1
 
-
 --
 -- * Part 1: Reverse Polish Notation
 --
