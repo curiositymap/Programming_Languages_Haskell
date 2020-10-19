@@ -70,26 +70,23 @@ Prelude> :t not even 3
 --- | HINT: Which one is the *top level* application?
 -- *top level* application is the one evaluated *the last*.
 
-      Case 1: 
 ```Haskell
+      Case 1: not even 3
 
             @
            /  \
           @    3
          / \
       not  even
-```
-      --> not even 3
 
-      Case 2:
-```Haskell
+
+      Case 2: not (even 3)
            @
           / \
         not  @
             / \
           even 3
 ```
-      --> not (even 3)
 
 --> Unification Fails
 
@@ -99,9 +96,8 @@ Q3
 Prelude> :t not (even 3)
 not (even 3) :: Bool
 ```
-LHS: Int -> Bool
-RHS: Int ->(?) Int [Match]
-Bool -> Bool [Match]
+- LHS: Int -> Bool
+- RHS: Int ->(?) Int [Match], Bool -> Bool [Match]
 
 Q4 Function Composition Example
 ```Haskell
