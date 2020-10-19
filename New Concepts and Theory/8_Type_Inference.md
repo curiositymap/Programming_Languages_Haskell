@@ -1,10 +1,8 @@
-# Type Inference
+# Type Inference (To be covered in Quiz 1 on 10/21)
 
 ### How to determine type classes?
 
-(To be covered in the quiz 1 on 10/21)
-
-e.g., Given e1 and e2, e1 is the function that takes an argument e2.
+Given e1 and e2, e1 is the function that takes an argument e2.
 Therefore, e1 should be T1 (type 1) that takes argument and gives a result.
 
 #### Unification Process:
@@ -18,23 +16,26 @@ If there's any of these steps fails, a type error occurs.
 #### | HINT: Find the *top level* application
 *Top level* application is the one evaluated *the last*.
 
-Case 1 [O] --> Bottom-up Style
 
+Case 1 [O] --> Correct bottom-up style
+```Haskell
       @
      /  \
     @    3
    / \
 not  even
-
+```
 --> not even 3
 
-Case 2 [X]
+
+Case 2 [X] --> Incorrect bottom-up style
+```Haskell
      @
     / \
   not  @
       / \
     even 3
-
+```
 --> not (even 3)
 
 
