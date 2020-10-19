@@ -49,7 +49,7 @@ Prelude> :t Just
 Just :: a -> Maybe a
 ```
 
--- "Just" data constructor takes a and returns "Maybe" datatype a
+-- "Just" data constructor takes a and returns "Maybe" data type a
 
 Q2
 ```Haskell
@@ -95,41 +95,53 @@ Prelude> :t not even 3
 
 
 Q3
+```Haskell
 Prelude> :t not (even 3)
 not (even 3) :: Bool
-
+```
 LHS: Int -> Bool
 RHS: Int ->(?) Int [Match]
 Bool -> Bool [Match]
 
 Q4 Function Composition Example
+```Haskell
 Prelude> :t not . even
+
 --- We can change this into
 --- ((.)) not even :t 
 not . even :: Integral a => a -> Bool
+```
 
 Q5
+```Haskell
 Prelude> :t even . not
 
 <interactive>:1:1: error:
     • No instance for (Integral Bool) arising from a use of ‘even’
     • In the first argument of ‘(.)’, namely ‘even’
       In the expression: even . not
-
+```
 Q6
+```Haskell
 Prelude> :t map (Just . even)
 map (Just . even) :: Integral a => [a] -> [Maybe Bool]
-
+```
 Q7
+```Haskell
 Prelude> :t map
 map :: (a -> b) -> [a] -> [b]
 -- argument is (a -> b)
 -- result is [a] -> [b]
+```
 
+Q8
+```Haskell
 Prelude> :t even
 even :: Integral a => a -> Bool
+```
 
+Q9
+```Haskell
 Prelude> :t map even
 map even :: Integral a => [a] -> [Bool]
-
-Type variable assignment:
+```
