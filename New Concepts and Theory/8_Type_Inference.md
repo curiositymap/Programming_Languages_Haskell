@@ -8,15 +8,15 @@ e.g., Given e1 and e2, e1 is the function that takes an argument e2.
 Therefore, e1 should be T1 (type 1) that takes argument and gives a result.
 
 #### Unification Process:
-1. check if the type of e2 is equivalent to the type of e1's argument.
+1. Check if the type of e2 is equivalent to the type of e1's argument.
 2. Additionally, the type of the result should be equivalent to the outcome of e1e2.
 3. This unification step is particularly tricky. However, it's heavily used in type inference.
 
 If there's any of these steps fails, a type error occurs.
 
 
---- | HINT: Which one is the *top level* application?
--- *top level* application is the one evaluated *the last*.
+#### | HINT: Find the *top level* application
+*Top level* application is the one evaluated *the last*.
 
 Case 1 [O] --> Bottom-up Style
 
