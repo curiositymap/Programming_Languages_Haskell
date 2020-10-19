@@ -41,15 +41,18 @@ Case 2 [X] --> Incorrect bottom-up style
 
 
 
-Type Inference Exercise:
+### Type Inference Exercise:
 
 Q1
+```Haskell
 Prelude> :t Just
 Just :: a -> Maybe a
+```
 
 -- "Just" data constructor takes a and returns "Maybe" datatype a
 
 Q2
+```Haskell
 Prelude> :t not even 3
 
 <interactive>:1:1: error:
@@ -63,27 +66,29 @@ Prelude> :t not even 3
     • Probable cause: ‘even’ is applied to too few arguments
       In the first argument of ‘not’, namely ‘even’
       In the expression: not even 3
-
+```
 --- | HINT: Which one is the *top level* application?
 -- *top level* application is the one evaluated *the last*.
 
-      Case 1:
+      Case 1: 
+```Haskell
 
             @
            /  \
           @    3
          / \
       not  even
-
+```
       --> not even 3
 
       Case 2:
+```Haskell
            @
           / \
         not  @
             / \
           even 3
-
+```
       --> not (even 3)
 
 --> Unification Fails
