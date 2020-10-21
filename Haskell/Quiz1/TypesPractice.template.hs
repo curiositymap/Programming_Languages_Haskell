@@ -100,11 +100,25 @@ treeMap f g (Node a l r) = Node (g a) (treeMap f g l) (treeMap f g r)
 
 -- ex10 = gt one . bit
 
+-- Operators are lower in priority than function applications.
+-- Therefore, even . gt one is equivalent to even . (gt one) and this is equal to (.) even (gt one)
+
+
 -- ex11 = Node True (Leaf one) . Leaf
 
 -- ex12 = flip Just
 
 -- ex13 = flip map [one,two]
+
+-- Unification Problem
+-- a1 -> b1 -> c1 =? (a2->b2) -> [a2] -> [b2]
+-- a1 = a2 -> b2
+-- b1 = [a2]
+-- c1 = [b2]
+-- flip map :: [a2] -> (a2->b2) -> [b2]
+-- [a2] =? [Int]
+-- a2 = Int
+-- (Int -> b2) -> [b2]
 
 -- ex14 = treeMap bit even
 
