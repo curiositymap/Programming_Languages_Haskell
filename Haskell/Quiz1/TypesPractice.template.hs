@@ -79,83 +79,122 @@ treeMap f g (Node a l r) = Node (g a) (treeMap f g l) (treeMap f g r)
 
 
 -- ** Determine the type
+ex1 :: Tree Int b
+ex1 = Leaf one
 
--- ex1 = Leaf one
 
--- ex2 = [Just True, Nothing]
+ex2 = [Just True, Nothing]
 
--- ex3 = [Leaf one, Leaf True]
+ex3 = [Leaf one, Leaf two]
+-- Type error
+{-
+data Tree a b
+   = Leaf a
+   | Node b (Tree a b) (Tree a b)
+   deriving (Eq, Show)
 
--- ex4 = [Leaf one, Node Nothing (Leaf one) (Leaf two)]
 
--- ex5 = Just bit True
+ex3 = [Leaf one, Leaf True]
 
--- ex6 = Just . bit
+Leaf one --> Leaf Int 1
+Leaf True --> Leaf Bool (Type Match Fail)
+Therefore, it should be
 
--- ex7 = Leaf (Leaf one)
+Tree Int b
+-}
 
--- ex8 = bit . even
+
+ex4 = [Leaf one, Node Nothing (Leaf one) (Leaf two)]
+
+ex5 = Just bit True
+-- Type error
+{-
+
+ex5 = Just (bit True)
+
+data Maybe a
+   = Nothing
+   | Just a --> Just takes bit as an argument
+   deriving (Eq, Show)
+
+bit :: Bool -> Int
+
+Maybe(Bool -> Int)
+-}
+
+ex6 = Just . bit
+
+ex7 = Leaf (Leaf one)
+
+ex8 = bit . even
 
 -- ex9 = even . gt one
+-- Type error
+{-
+even :: Int -> Bool
 
--- ex10 = gt one . bit
+gt :: Int -> Int -> Bool
 
--- Operators are lower in priority than function applications.
--- Therefore, even . gt one is equivalent to even . (gt one) and this is equal to (.) even (gt one)
+The output of gt one is Bool,
+Then if you try to put that into even,
+it doesn't work since even function expects an Int.
+-}
 
+ex10 = gt one . bit
 
--- ex11 = Node True (Leaf one) . Leaf
+ex11 = Node True (Leaf one) . Leaf
 
 -- ex12 = flip Just
+-- Type error
+{-
+Flip expected: a -> b -> c as an input
+Just returned: a -> Maybe a
+-}
 
--- ex13 = flip map [one,two]
+ex13 = flip map [one,two]
 
--- Unification Problem
--- a1 -> b1 -> c1 =? (a2->b2) -> [a2] -> [b2]
--- a1 = a2 -> b2
--- b1 = [a2]
--- c1 = [b2]
--- flip map :: [a2] -> (a2->b2) -> [b2]
--- [a2] =? [Int]
--- a2 = Int
--- (Int -> b2) -> [b2]
+ex14 = treeMap bit even
 
--- ex14 = treeMap bit even
+ex15 = flip treeMap bit even
 
--- ex15 = flip treeMap bit even
+ex16 = flip (treeMap bit) (Leaf True)
+-- Type error
+-- bit expects Boolean, but leaf has int
 
--- ex16 = flip (treeMap bit) (Leaf one)
 
--- ex17 = flip (treeMap even) (Leaf one)
+ex17 = flip (treeMap even) (Leaf one)
 
--- ex18 = flip (.) even bit
+ex18 = flip (.) even bit
 
 
 -- ** Create an expression
 
 -- ex19 :: Maybe (Bool -> Int)
--- ex19 = undefined
+-- ex19 = Just bit True
 
 -- ex20 :: Maybe (Maybe a)
--- ex20 = undefined
+-- ex20 = Just (Just 1)
 
 -- ex21 :: Maybe (Maybe Int)
--- ex21 = undefined
+-- ex21 = Just (Just one)
 
 -- ex22 :: Tree Int
--- ex22 = undefined
+-- ex22 = Leaf one
+--- why is it impossible?
 
 -- ex23 :: Tree (Maybe a) b
--- ex23 = undefined
+-- ex23 = Leaf nothing
+-- why??
 
 -- ex24 :: [Int] -> [Bool]
--- ex24 = undefined
+-- ex24 = map even
+-- why ??
 
 -- ex25 :: Tree a Bool -> Tree (Maybe a) Int
--- ex25 = undefined
+-- ex25 = treeMap Just bit
 
 -- ex26 :: Tree Int b -> (b -> d) -> Tree Bool d
--- ex26 = undefined
+-- ex26 = flip (treeMap even)
 
 -- ex27 :: (a -> c) -> Tree a Int -> Tree c Bool
--- ex27 = undefined
+-- ex27 = flip treeMap even
