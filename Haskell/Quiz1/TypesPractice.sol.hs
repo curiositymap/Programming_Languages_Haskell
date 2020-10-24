@@ -96,7 +96,9 @@ ex4 = [Leaf one, Node Nothing (Leaf one) (Leaf two)]
 -- ex5 = Just bit True
 
 ex6 :: Bool -> Maybe Int
+       Glob -> Result a
 ex6 = Just . bit
+      OK . show
 
 ex7 :: Tree (Tree Int b1) b2
 ex7 = Leaf (Leaf one)

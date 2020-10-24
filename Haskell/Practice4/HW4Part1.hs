@@ -1,44 +1,23 @@
-{-
-Consider the following abstract syntax, which describes a language that manipulates three integer registers named A, B, and R.
--}
-int	::=	(any integer)	  -- integers
+-- Haskell Data Type Definitions & Haskell Types
 
-reg	::=	A  |  B  |  R	  -- register names
+data Term = Not Term
+          | If Term Term Term
+          | Lit Bool
 
-expr	::=	int	          -- integer literal
-        |	reg	          -- load from register
-        |	expr + expr	  -- integer addition
-        |	expr <= expr	-- less than or equal to
-        |	not expr	    -- boolean negation
- 			
-stmt	::=	reg := expr	-- store to register
-        |	if expr	conditional statement
-then prog
-else prog
-end
-|	do prog	loop until break
-end
-|	break	break out of a loop
+-- Haskell Data Value Examples
 
-prog	::=	ε  |  stmt ; prog	sequence of statements
-Note that although the expression language may produce both booleans and integers, the registers may only contain integers.
+ex1 = Lit True
+ex2 = If (Lit True) (Lit True) (Lit False)
+ex3 = Not(Not(Lit False))
 
-Here is an example of a short program in this language that multiplies the numbers in A and B, storing the result in R. Comments, which are not reflected in the abstract syntax, are included in curly braces { … }.
+-- Haskell encoding
 
-A := 7;           { initialize the registers }
-B := 9;
-R := 0;
-do
-  if A <= 0 then  { loop until A is 0 }
-    break;
-  else
-    R := R + B;   { ... add B to R }
-    A := A + -1;  { ... decrement A }
-  end;
-end;
+data Num = Zero | One | Two | Three | Four | Five | Six | Seven | Eight | Nine
+data Int = Single Num | Multiple Num Int
+data Reg = A | B | R
 
-Note that in this assignment you are not implementing the semantics of this language.
-You are only implementing and manipulating its syntax. This means that you have no way to run programs in this object language. I realize this makes testing difficult, so just do your best!
-
-
-}
+data Exp = ExpInt Int
+         | ExpReg Reg
+         | ExpAdd Exp Exp
+         | ExpLeq Exp Exp
+         | ExpNeg Exp
