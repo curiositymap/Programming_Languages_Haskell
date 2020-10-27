@@ -8,12 +8,20 @@
 -- foo :: Glob
 -- OK (show foo) :: Result String
 
-data Tree a
-   = Nook a (Tree a)
-   | Node (Tree a) (Tree a)
-   | Leaf
+-- data Tree a
+--    = Nook a (Tree a)
+--    | Node (Tree a) (Tree a)
+--    | Leaf
+--
+-- sumTree :: Tree Int -> Int
+-- sumTree Leaf = 0
+-- sumTree (Nook i t) = i + sumTree t
+-- sumTree (Node l r) = sumTree l + sumTree r
 
-sumTree :: Tree Int -> Int
-sumTree Leaf = 0
-sumTree (Nook i t) = i + sumTree t
-sumTree (Node l r) = sumTree l + sumTree r
+data Maybe a
+   = Nothing
+   | Just a
+
+data Tree a b
+   = Leaf a
+   | Node b (Tree a b) (Tree a b)
