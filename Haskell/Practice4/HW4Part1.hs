@@ -4,9 +4,7 @@ Consider the following abstract syntax, which describes a language that manipula
 
 
 int	::=	(any integer)	integers
- 			
 reg	::=	A  |  B  |  R	register names
- 			
 expr	::=	int	integer literal
 |	reg	load from register
 |	expr + expr	integer addition
