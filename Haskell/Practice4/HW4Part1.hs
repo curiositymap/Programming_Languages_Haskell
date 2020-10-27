@@ -2,27 +2,27 @@
 
 Consider the following abstract syntax, which describes a language that manipulates three integer registers named A, B, and R.
 
+
 int	::=	(any integer)	integers
  			
 reg	::=	A  |  B  |  R	register names
  			
-expr	::=	int	           -- integer literal
-       |	   reg	           -- load from register
-       |	   expr + expr	     -- integer addition
-       |	   expr <= expr	  -- less than or equal to
-       |	   not expr	        -- boolean negation
+expr	::=	int	integer literal
+|	reg	load from register
+|	expr + expr	integer addition
+|	expr <= expr	less than or equal to
+|	not expr	boolean negation
  			
-stmt	::=	reg := expr	      -- store to register
-       |	   if expr	         -- conditional statement
-            then prog	
-            else prog	
-            end	
-       |	   do prog	         -- loop until break
-            end	
-       |	   break	            -- break out of a loop
+stmt	::=	reg := expr	store to register
+|	if expr	conditional statement
+then prog	
+else prog	
+end	
+|	do prog	loop until break
+end	
+|	break	break out of a loop
  			
-prog	::=	ε  |  stmt ; prog	-- sequence of statements
-
+prog	::=	ε  |  stmt ; prog	sequence of statements
 
 Note that although the expression language may produce both booleans and integers, the registers may only contain integers.
 
