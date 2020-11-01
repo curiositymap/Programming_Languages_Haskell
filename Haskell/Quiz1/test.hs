@@ -18,10 +18,23 @@
 -- sumTree (Nook i t) = i + sumTree t
 -- sumTree (Node l r) = sumTree l + sumTree r
 
-data Maybe a
-   = Nothing
-   | Just a
+data Result a
+   = OK a
+   | Error String
 
-data Tree a b
-   = Leaf a
-   | Node b (Tree a b) (Tree a b)
+data Glob
+   = Lit Int
+
+show :: Glob -> String
+show = undefined
+
+build :: Int -> Glob
+build = undefined
+
+const :: a -> b -> a
+const = undefined
+
+(.) :: (b -> c) -> (a -> b) -> a -> c
+(.) = undefined
+
+con
