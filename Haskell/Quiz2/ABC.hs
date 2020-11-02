@@ -6,7 +6,7 @@ module ABC where
 --    you must start with in order to generate it. In each blank, write either
 --    A, B, or C if the string can be generated, or write "no" if it cannot be
 --    generated.
--- 
+--
 --    a. A
 --    b. B
 --    c. no
@@ -21,13 +21,17 @@ module ABC where
 
 -- 2. Implement the grammar as a Haskell data type.
 
-data A = OAO A 
+data RegA = OAO A
        | IBI B
 
-data B = BBC B B C 
+--- The first RegA is `type construct,` 
+-- OAO is a `data construct`
+-- and the last A is `argument`
+
+data RegB = BBC B B C
        | O
 
-data C = CCC C C C 
+data RegC = CCC C C C
        | I
 
 -- Note that you can choose whatever names you like for the data constructors.
@@ -61,13 +65,13 @@ prettyC I              = "1"
 -- Note that these solutions are not necessarily unique!
 
 
--- | 
+-- |
 --   >>> prettyA exA
 --   "101"
 exA :: A
 exA = IBI O
 
--- | 
+-- |
 --   >>> prettyB exB
 --   "00111"
 exB :: B
@@ -75,13 +79,13 @@ exB = BBC O O (CCC I I I)
 
 -- exC is not possible
 
--- | 
+-- |
 --   >>> prettyA exD
 --   "0100110"
 exD :: A
 exD = OAO (IBI (BBC O O I))
 
--- | 
+-- |
 --   >>> prettyC exE
 --   "11111"
 exE :: C
@@ -89,7 +93,7 @@ exE = CCC (CCC I I I) I I
 
 -- exF is not possible
 
--- | 
+-- |
 --   >>> prettyB exG
 --   "0010111"
 exG :: B
@@ -97,13 +101,13 @@ exG = BBC (BBC O O I) O (CCC I I I)
 
 -- exH is not possible
 
--- | 
+-- |
 --   >>> prettyB exI
 --   "0000111"
 exI :: B
 exI = BBC O (BBC O (BBC O O I) I) I
 
--- | 
+-- |
 --   >>> prettyB exJ
 --   "0011101"
 exJ :: B
