@@ -1,0 +1,81 @@
+# Lambda calculus exercises
+
+## Slide 12
+
+### Round 1
+
+   [(\x.x) z]
+-> z
+## Where is the redex?
+## The whole thing (application with lambda on the LHS)
+## Replace the whole body,
+## Substitue x with z
+
+
+ (\xy.x) z
+## Expand/remove the syntactic sugar
+## Rewrite it in a way that we can easily understand
+
+= [(\x.(\y.x))] z
+
+## Now we have an application on the LHS
+## Substitute z for all of the x's in the body
+
+-> \y.z
+
+
+  (\xy.x) z u
+## Remove the syntactic sugar
+= ([(\x.(\y.x)) z]) u
+
+# (\x.(\y.x)) z -- is the first application/redex we can reduce
+# Substitute z for x in the body
+-> [(\y.z) u] -- now we have one redex
+
+# Substitute y with u and there's no y
+# So we only have z
+-> z
+
+## Parenthesis around the left-most application
+
+
+### Round 2
+
+([\x.x x]) ([\y.y])
+ __________________
+-> (\y.y) (\y.y)
+   -------------
+-> (\y.y)
+
+\x.(\y.y) z
+   --------
+-> \x.z -- substitute y with z
+
+## How many applications do we have here? One with Z as argument
+## There are two abstractions.
+## \y. is our abstraction as it goes as far right as possible
+## The body of the abstraction is (\y.y) which is redex
+z y
+
+  (\x.(x (\y.x))) z
+  ------------------
+-> z (\y.z)
+-- This is not a redex
+
+
+-- Which application is a redex?
+
+
+## Examples of free and bound variables
+
+(\x.x y) z
+
+Free: y and z
+Bound: x
+
+(\x.x y) x
+Free: x and y
+Bound: x (this is a different x!)
+
+(\x.x y) z
+within the body of the abstraction (x y): both x and y are free
