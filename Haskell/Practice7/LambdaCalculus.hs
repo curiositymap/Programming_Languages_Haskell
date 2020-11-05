@@ -32,3 +32,12 @@ app2 f e1 e2 = App (App f e1) e2
 -- | Apply a ternary function
 app3 :: Exp -> Exp -> Exp -> Exp -> Exp
 app3 f e1 e2 e3 = App (App (App f e1) e2) e3
+
+
+free :: Exp -> Set Var
+free (Ref x)     = Set.singleton x
+free (App e1 e2) = Set.union (free e1) (free e2)
+free (Abs x e)   = Set.delete x (free e)
+
+closed :: Exp -> Bool
+closed e = Set.null . free
