@@ -1,6 +1,32 @@
 module HW4Part1 where
 
+{- Grammar
 
+
+int	::=	(any integer)	integers
+
+reg	::=	A  |  B  |  R	register names
+
+expr	::=	int	integer literal
+|	reg	load from register
+|	expr + expr	integer addition
+|	expr <= expr	less than or equal to
+|	not expr	boolean negation
+
+stmt	::=	reg := expr	store to register
+|	if expr	conditional statement
+then prog
+else prog
+end
+|	do prog	loop until break
+end
+|	break	break out of a loop
+
+prog	::=	ε  |  stmt ; prog	sequence of statements
+
+
+
+-}
 -- 1. Abstract syntax
 
 data Reg
@@ -31,6 +57,22 @@ type Prog = [Stmt]
 
 
 -- 2. Example program
+
+{-
+
+A := 7;           { initialize the registers }
+B := 9;
+R := 0;
+do
+  if A <= 0 then  { loop until A is 0 }
+    break;
+  else
+    R := R + B;   { ... add B to R }
+    A := A + -1;  { ... decrement A }
+  end;
+end;
+
+-}
 example :: Prog
 example =
   [ Set A (Lit 7)

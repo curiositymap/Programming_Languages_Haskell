@@ -103,23 +103,21 @@ type Stack = [Either Bool Int]
 type State = (Prog, Stack)
 -- State is a tuple of Prog and Stack
 
+
+
+
+
 -- 7. Define a one-step reduction relation for a StackLang program,
 --    and implement it as a function.
+
 step :: State -> Maybe State
 -- Maybe State --> so that we can represent failure cases
 -- "Pattern match" on all of the cases
 
 -- <REDUCTION RULES>
--- step (PushN n : p, s)
--- --> First half before , is program part
--- --> Second half after , is stack part
 
 step (PushN n : p, s) = Just (p, Right n : s)
-
--- Just (p, Right n : s)
 -- Since we used Maybe, return type should match as Just
--- Once we execute the first step "n" the rest of the program after PushN n
--- And add the element (n) on the old stack at the beginnning
 
 step (PushB b : p, s) = Just (p, Left b : s)
 -- Same as the above cas PushN (Push Int to Stack case),
@@ -137,20 +135,23 @@ step (LEq : p, Right n : Right m : s) = Just (p, Left (n <= m) : s)
 -- Same as the above case input elements are Int
 -- but use Left constructor since the added element to the Stack is Bool
 
-
+{- IfElse Conditional -}
 -- Divide the cases of elements at the top of the stack (Bool)
 -- When Left True is on top of the stack, take the first program (t)
 -- When Left False is on top of the stack, take the second program (e)
 
 step (IfElse t e : p, Left True  : s) = Just (t ++ p, s)
--- The reason we're using ++ is
--- t and p are both programs (list of commands), that's why we use "++"
+-- Why ++ ? `++` operator is the list concatenation operator
+-- that takes TWO lists and combine them into a SINGLE list.
+-- t and p are both programs (list of commands)
 -- this is going to replace IfElse branch with t
 -- "++" operator is the list concatenation operator
 -- that takes TWO lists and combine them into a SINGLE list.
 
 step (IfElse t e : p, Left False : s) = Just (e ++ p, s)
-
+-- Divide the cases of elements at the top of the stack (Bool)
+-- When Left True is on top of the stack, take the first program (t)
+-- When Left False is on top of the stack, take the second program (e)
 
 -- no congruence rules!
 -- All of the other cases

@@ -1,0 +1,30 @@
+# Practice Using Redex Sequences
+## Redex (Reducible expression) can be highlighted in the bracket.
+
+   not (if [(not true)] false (not false))
+-> not [(if false false (not false))]
+-> not [(not false)]
+-> [not true]
+-> false
+
+-- Question 3-1
+
+   not (cimp [(not true)] false)
+-> not [(cimp false false)]
+-> [not true]
+-> false
+
+-- Question 3-2
+
+   cimp [(not true)](not false)
+-> cimp false [(not false)]
+-> [cimp false true]
+-> false
+
+
+-- Question 3-3
+
+   not (cimp false [(cimp false false)])
+-> not [(cimp false true)]
+-> not false
+-> true

@@ -19,7 +19,7 @@ eval (Not e)    = case eval e of
                     Tru -> Fls
                     Fls -> Tru
                     _   -> error "eval: whoops"
-                    -- The third line is option:
+                    -- The third line is optional:
                     -- Since Exp has multiple cases beyond just Tru and Fls,
                     -- It is recommended to "Pattern Match" other cases such as
                     -- Not Exp and If Exp Exp Exp by using _
@@ -28,7 +28,7 @@ eval (If c t e) = case eval c of
                     Tru -> eval t
                     Fls -> eval e
                     _   -> error "eval: whoops"
-                    -- The third line is option:
+                    -- The third line is optional:
                     -- Since Exp has multiple cases beyond just Tru and Fls,
                     -- It is recommended to "Pattern Match" other cases such as
                     -- Not Exp and If Exp Exp Exp by using _

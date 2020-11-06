@@ -1,3 +1,19 @@
+{- Grammar:
+
+i ∈ Int   ::=   (any integer)
+r ∈ Reg   ::=   zero
+           |   reg i
+e ∈ Exp   ::=   i
+           |   r
+           |   e + e
+c ∈ Cmd   ::=   print e
+           |   set r to e
+           |   loop e do p end
+p ∈ Prog   ::=   ε
+           |   c ; p
+-}
+
+
 -- Question 1.
 
 data Reg
