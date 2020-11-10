@@ -13,10 +13,11 @@
 
 
  (\xy.x) z
+
 ## Expand/remove the syntactic sugar
 ## Rewrite it in a way that we can easily understand
 
-= [(\x.(\y.x))] z
+= [(\x.(\y.x)) z]
 
 ## Now we have an application on the LHS
 ## Substitute z for all of the x's in the body
@@ -25,8 +26,8 @@
 
 
   (\xy.x) z u
-## Remove the syntactic sugar
-= ([(\x.(\y.x)) z]) u
+## Extend/remove the syntactic sugar
+= [(\x.(\y.x)) z] u
 
 # (\x.(\y.x)) z -- is the first application/redex we can reduce
 # Substitute z for x in the body
@@ -41,13 +42,16 @@
 
 ### Round 2
 
-([\x.x x]) ([\y.y])
+([\x.x x]) ([\y.y]) -- [\x.x x] is the abstraction of the application with lambda on the left hand side
  __________________
--> (\y.y) (\y.y)
+-> (\y.y) (\y.y) -- substitute \y.y for the body of the abstraction (just y)
    -------------
 -> (\y.y)
 
-\x.(\y.y) z
+\x.(\y.y) z - there are two applications
+
+-- \x is the abstraction and \y.y is the body of the abstraction (goes rightmost)
+
    --------
 -> \x.z -- substitute y with z
 
@@ -59,10 +63,10 @@ z y
 
   (\x.(x (\y.x))) z
   ------------------
--> z (\y.z)
+-> z (\y.z) -- substitute the z with the z in the body (x (\y.x))
 -- This is not a redex
 
-
+ 
 -- Which application is a redex?
 
 
