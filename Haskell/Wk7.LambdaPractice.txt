@@ -1,3 +1,5 @@
+
+
 # Lambda calculus exercises
 
 ## Slide 12
@@ -66,7 +68,7 @@ z y
 -> z (\y.z) -- substitute the z with the z in the body (x (\y.x))
 -- This is not a redex
 
- 
+
 -- Which application is a redex?
 
 
