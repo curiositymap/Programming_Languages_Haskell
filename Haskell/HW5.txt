@@ -1,0 +1,11 @@
+Lambda calculus
+
+1. (λx. x x) ((λx y. y x) z (λx. x))
+1-1. Normal Order Reduction: Evaluate the leftmost
+
+1-2. Applicative Order Reduction: Evaluate the leftmost of the innermost
+
+2. (λx y z. x z) (λz. z) ((λy. y) (λz. z)) x
+2-1. Normal Order Reduction: Evaluate the leftmost
+
+2-2. Applicative Order Reduction: Evaluate the leftmost of the innermost 
