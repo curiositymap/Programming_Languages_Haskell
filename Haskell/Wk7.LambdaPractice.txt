@@ -11,7 +11,7 @@
 ## Where is the redex?
 ## The whole thing (application with lambda on the LHS)
 ## Replace the whole body,
-## Substitue x with z
+## Substitute z for x
 
 
  (\xy.x) z
@@ -35,53 +35,52 @@
 # Substitute z for x in the body
 -> [(\y.z) u] -- now we have one redex
 
-# Substitute y with u and there's no y
+# Substitute y for u in the body of the abstraction
+# There's no y in the body
 # So we only have z
 -> z
 
 ## Parenthesis around the left-most application
+## Application is left-associative
 
 
 ### Round 2
 
-([\x.x x]) ([\y.y]) -- [\x.x x] is the abstraction of the application with lambda on the left hand side
+([\x.(x x)]) ([\y.y]) -- [\x.x x] is the abstraction of the application with lambda on the left hand side
  __________________
--> (\y.y) (\y.y) -- substitute \y.y for the body of the abstraction (just y)
+-> (\y.y) (\y.y) -- substitute \y.y for the body of the abstraction, which is just y
    -------------
 -> (\y.y)
 
 \x.(\y.y) z - there are two applications
+   ---------
+-- \x is the abstraction and
+-- \y.y is the body of the abstraction (abstractions extend far right)
 
--- \x is the abstraction and \y.y is the body of the abstraction (goes rightmost)
+-> \x.z -- substitute z for any reference of y in the body of abstraction, y
 
-   --------
--> \x.z -- substitute y with z
 
-## How many applications do we have here? One with Z as argument
+## How many applications do we have here? One with z as argument
 ## There are two abstractions.
 ## \y. is our abstraction as it goes as far right as possible
-## The body of the abstraction is (\y.y) which is redex
-z y
 
   (\x.(x (\y.x))) z
   ------------------
--> z (\y.z) -- substitute the z with the z in the body (x (\y.x))
+-> z (\y.z) -- substitute z for any reference of x in the body (x (\y.x))
 -- This is not a redex
 
-
--- Which application is a redex?
 
 
 ## Examples of free and bound variables
 
-(\x.x y) z
+(\x.(x y)) z
 
-Free: y and z
+Free: y (referenced, but not declared) and z
 Bound: x
 
-(\x.x y) x
-Free: x and y
-Bound: x (this is a different x!)
+(\x1.x1 y) x0
+Free: x0 and y
+Bound: x1 (this is a different x!)
 
 (\x.x y) z
 within the body of the abstraction (x y): both x and y are free

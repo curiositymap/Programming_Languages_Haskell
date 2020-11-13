@@ -1,11 +1,87 @@
-Lambda calculus
+Lambda Calculus - Beta Reduction
 
-1. (λx. x x) ((λx y. y x) z (λx. x))
-1-1. Normal Order Reduction: Evaluate the leftmost
+Q1. (λx. x x) ((λx y. y x) z (λx. x))
 
-1-2. Applicative Order Reduction: Evaluate the leftmost of the innermost
 
-2. (λx y z. x z) (λz. z) ((λy. y) (λz. z)) x
-2-1. Normal Order Reduction: Evaluate the leftmost
+1-1. Normal-order reduction: Reduce the leftmost redex (top-level application)
+  (\x.x x) ((\xy.y x) z (\x.x))
 
-2-2. Applicative Order Reduction: Evaluate the leftmost of the innermost 
+-- De-sugaring: remove the syntactic sugar
+-- \xyz.f is equivalent to \x.\y.\z.f
+
+= (\x.x x) (((\x.(\y.y x)) z) (\x.x))
+  ---------------------------------
+-> ((\x.(\y.y x)) z (\x.x)) ((\x.(\y.y x)) z (\x.x))
+   ---------------- [Abstractions extend far right]
+-> (\y.(y z) (\x.x)) ((\x.(\y.y x)) z (\x.x))
+   ----------------
+-> (\x.x z) ((\x.(\y.y x)) z (\x.x))
+   --------
+-> z ((\x.(\y.y x)) z (\x.x))
+       --------------
+-> z  (\y.y z (\x.x))
+      ---------------
+-> z  (\x.x z)
+      --------
+-> z z
+
+
+1-2. Applicative-order reduction: Reduce the leftmost of the innermost redexes
+  (\x.x x) ((\xy.y x) z (\x.x))
+
+-- Desugaring: remove the syntactic sugar
+-- \xyz.f is equivalent to \x.\y.\z.f
+
+= (\x.x x) (((\x.(\y.y x)) z) (\x.x))
+              -------------- [The leftmost of the innermost redex w/ the body of abstraction (\y.y x)]
+-> (\x.x x) ((\y.(y z))(\x.x))
+            ---------------- [The innermost redex w/ the body of abstraction, (y z)]
+-> (\x.x x) ((\x.x) z)
+            ---------- [The innermost redex]
+-> (\x.x x) z
+   ----------
+-> z z
+
+
+Q2. (λxyz.(x z)) (λz.z) ((λy.y) (λz.z)) x
+
+(λxyz. (x z)) (λz. z) ((λy. y) (λz. z)) x
+---------------------[Redex 1]
+                      -------------------[Redex 2]
+-- There are TWO Redexes
+-- which one to reduce first depends on the reduction strategy
+
+2-1. Normal Order Reduction: Reduce the leftmost redex (top-level)
+    (\xyz.x z) (\z.z) ((\y.y)(\z.z)) x
+
+-- Desugaring: remove the syntactic sugar
+-- \xyz.f is equivalent to \x.\y.\z.f
+
+=   ((\x.(\y.(\z.(x z))) (\z.z)) ((\y.y)(\z.z))) x
+    ----------------------------[The leftmost redex w/ the body of abstraction, (\y.(\z.(x z))]
+=  ((\x.(\y.(\z.(x z))) (\x0.x0)) ((\y.y)(\z.z)) [x'0]
+    ----------------------------[Alpha substitution; optional]
+->  (\y.(\z.(\x0.x0 z))) ((\y.y)(\z.z)) [x'0]
+=   (\y.(\z.(\x0.x0 z))) ((\x1.x1)(\x2.x2)) [x'0]
+    ---------------------------------------------
+->  ((\z.(\x0.x0)z))x'0)
+    --------------------
+->  (\x0.x0)x'0
+->  x'0
+
+
+2-2. Applicative Order Reduction: Reduce the leftmost of the innermost redexes
+     (\xyz.x z) (\z.z) ((\y.y)(\z.z)) x
+->   ((\x.(\y.(\z'.(x z'))) (\z.z)) ((\y.y)(\z.z))) x
+     ----------------------------(Redex1): In Applicative-order reduction, we choose Redex 1
+                                ------------------(Redex2): In Applicative-order reduction, choose the leftmost
+
+->   ((\y.\z'.(\z.z) z')) ((\y.y) (\z.z))) x
+              ----------[The leftmost of the innermost redex]
+->   ((\y.\z'.z') ((\y.y)(\z.z)) x
+     -----------------------------(Redex1)
+                  -------------(Redex2): In Applicative-order reduction, we choose Redex 2.
+->   ((\y.\z'.z') (\z.z)) x
+     ----------------------
+->   (\z'.z') x
+->   x

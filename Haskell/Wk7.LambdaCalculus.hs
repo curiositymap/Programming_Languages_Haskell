@@ -10,14 +10,14 @@ import qualified Data.Set as Set
 import Prelude hiding (and,or,not,pred,succ,fst,snd,either)
 import qualified Prelude as Prelude
 
--- * Syntax
+-- * Syntax of Lambda Calculus
 
 type Var = String
 
 data Exp
    = Ref Var
-   | App Exp Exp
-   | Abs Var Exp
+   | App Exp Exp   -- Application (left-associative)
+   | Abs Var Exp   -- Abstraction (extends far right)
    deriving(Eq,Ord,Show)
 
 
