@@ -51,8 +51,48 @@ Q2. (λxyz.(x z)) (λz.z) ((λy.y) (λz.z)) x
 -- There are TWO Redexes
 -- which one to reduce first depends on the reduction strategy
 
-2-1. Normal Order Reduction: Reduce the leftmost redex (top-level)
+2-1. Normal Order Reduction: Reduce the leftmost redex
     (\xyz.x z) (\z.z) ((\y.y)(\z.z)) x
+
+
+STEPS:
+1. Identify the redexes
+2. Figure out which one is innermost
+
+e.g., (\xy.xy) (\x.x) (\z.z)
+
+e.g., (\x. (\y.y) z) ((\w.w) z)
+      ------------------------- Redex1 (Normal Order)
+           --------- Redex2 (Innermost -- Leftmost -- Applicative-order)
+                    ----------- Redex3 (Innermost -- Rightmost -- following the Applicative-order on Rdex2)
+
+e.g., (\yw. w y z) (\x.x) (\y.y) 
+    -> ((\y.(\w. w y z)) (\x.x)) (\y.y)  --desugar
+    -> (\w.w (\x.x) z) (\y.y)
+    -> (\y.y) (\x.x) z
+    -> (\x.x) z 
+    -> z
+
+    e1 e2 e3
+    (e1 e2) e3
+
+e.g.,   (\yw. w y z) ((\x.x) (\y.y))
+Normal: (\w. w ((\x.x) (\y.y)) z)
+Applicative: (\yw. w y z) (\y.y)
+
+Normal-order vs. Applicative-order reduction
+-- CALL BY VALUE -- Applicative-order reduction: mostly used by real programming languages
+-- LAZY EVAL -- Normal-order evaluation: it will do exactly what it's needed to do (time performance, difficult to predict on space usage)
+
+
+When does an applicative order reduction that doesn't converge into a reduction?
+-- This is a halting problem.
+
+* Abstraction extends far right
+-- \x.x z --- which is not a redex because the body of the abstraction is x z
+-- \x.x (\y.y) z w q -- which is not a redex
+* Application is left-associative
+-- \x. ((((x (\y.y)) z) w) q) 
 
 -- Desugaring: remove the syntactic sugar
 -- \xyz.f is equivalent to \x.\y.\z.f
