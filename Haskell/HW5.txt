@@ -112,16 +112,16 @@ When does an applicative order reduction that doesn't converge into a reduction?
 
 2-2. Applicative Order Reduction: Reduce the leftmost of the innermost redexes
      (\xyz.x z) (\z.z) ((\y.y)(\z.z)) x
-->   ((\x.(\y.(\z'.(x z'))) (\z.z)) ((\y.y)(\z.z))) x
+->   ((\x.(\y.(\w.(x w))) (\z.z)) ((\y.y)(\z.z))) x
      ----------------------------(Redex1): In Applicative-order reduction, we choose Redex 1
-                                ------------------(Redex2): In Applicative-order reduction, choose the leftmost
+                                   ------------------(Redex2): In Applicative-order reduction, choose the leftmost
 
-->   ((\y.\z'.(\z.z) z')) ((\y.y) (\z.z))) x
-              ----------[The leftmost of the innermost redex]
-->   ((\y.\z'.z') ((\y.y)(\z.z)) x
+->   ((\y.\w.(\z.z) w)) ((\y.y) (\z.z))) x
+             ---------[The leftmost of the innermost redex]
+->   ((\y.\w.w) ((\y.y)(\z.z)) x
      -----------------------------(Redex1)
-                  -------------(Redex2): In Applicative-order reduction, we choose Redex 2.
-->   ((\y.\z'.z') (\z.z)) x
-     ----------------------
-->   (\z'.z') x
+                  ----------(Redex2): In Applicative-order reduction, we choose Redex 2.
+->   ((\y.\w.w) (\z.z)) x
+     --------------------
+->   (\w.w) x
 ->   x
