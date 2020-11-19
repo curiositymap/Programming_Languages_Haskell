@@ -1,3 +1,11 @@
+{-
+import Data.Set (Set)
+import qualified Data.Set as Set
+
+These two lines above should be manually typed & loaded at the beginning of running GHCI
+for some reason (maybe due to the ghci compatibility issues).
+
+-}
 module LambdaCalculus where
 
 import Data.Char (isNumber)
@@ -31,6 +39,10 @@ data Exp
 -- ** Syntactic sugar
 
 -- | Build an abstraction that takes two arguments.
+-- Takes two variables as arguments
+-- and the body of abstraction as expression
+-- to produce a new expression that encodes the binary function
+
 abs2 :: Var -> Var -> Exp -> Exp
 abs2 x1 x2 e = Abs x1 (Abs x2 e)
 
@@ -43,6 +55,11 @@ abs4 :: Var -> Var -> Var -> Var -> Exp -> Exp
 abs4 x1 x2 x3 x4 e = Abs x1 (abs3 x2 x3 x4 e)
 
 -- | Build an application to apply a function to two arguments.
+-- First Exp is the function we're applying
+-- Second Exp is the argument
+-- Third Exp is the second argument
+-- Last Exp is the new Exp we're returning
+
 app2 :: Exp -> Exp -> Exp -> Exp
 app2 f e1 e2 = App (App f e1) e2
 
@@ -140,6 +157,8 @@ unsafeSub x arg (Abs y e) = Abs y (unsafeSub x arg e)
 safeSub :: Substitution
 safeSub x arg e@(Ref y) = if x == y then arg else e
 safeSub x arg   (App l r) = App (safeSub x arg l) (safeSub x arg r)
+-- Rename y to y' and conduct the two substitutions
+-- We got a helper function "nextFree" to figure out the name of free variable we're substituting
 safeSub x arg e@(Abs y b) = Abs y' (safeSub x arg (safeSub y (Ref y') b))
   where y' = nextFree y (Set.singleton x `Set.union` free e `Set.union` free arg)
 

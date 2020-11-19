@@ -1,0 +1,21 @@
+(lambda x.(lambda y.y) x) ((lambda x y.x) w)
+(\x.\y.x1)w
+
+ (lambda x y.x y) (lambda x.x y) 
+
+ (lambda x.(lambda y.y) x) ((lambda x y.x) w)
+
+ (lambda x y.x y) (lambda x.x) ((lambda y.y) z)
+
+ (λx.(λy.y) x) ((λx y.x) w)
+ (λx y.x y) (λx.x y)
+ (λx.(λy.y) x) ((λx y.x) w)
+ (λx y.x y) (λx.x) ((λy.y) z)
+
+
+ export PATH="/Users/destiny/.local/bin:$PATH"
+
+[ -f "/Users/destiny/.ghcup/env" ] && source "/Users/destiny/.ghcup/env" # ghcup-env
+
+export GHCI=stack ghci
+. ~/.ghcup/env
