@@ -241,6 +241,8 @@ printReduceA = printReduce stepA
 -- ** Examples and tests
 
 -- | Variable capture examples from slide 17.
+-- | (λxy. x) y u
+
 ex1, ex2 :: Exp
 ex1 = app2 (abs2 "x" "y" (Ref "x")) (Ref "y") (Ref "u")
 ex2 = Abs "x" (App (abs2 "y" "x" (App (Ref "y") (Ref "x"))) (Ref "x"))

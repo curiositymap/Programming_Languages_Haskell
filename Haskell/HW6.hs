@@ -4,7 +4,15 @@ import Prelude hiding (print,and,or,not,pred,succ,fst,snd,either,length,sum,prod
 
 import DeBruijn
 
+{-
+ (λxy. x) y u
+is equivalent to
 
+ex1, ex2 :: Exp
+ex1 = app2 (abs2 "x" "y" (Ref "x")) (Ref "y") (Ref "u")
+ex2 = Abs "x" (App (abs2 "y" "x" (App (Ref "y") (Ref "x"))) (Ref "x"))
+
+-}
 --
 -- * Part 1: Nameless lambda calculus
 --
