@@ -10,6 +10,9 @@ type Val'
    = Either Int (Either Bool (Int,Bool))
 
 
+{- 1:1 Correspondence (Isomorphism)-}
+
+
 -- Example: Represent the items below in type Val'
 --
 -- A 2
@@ -33,3 +36,14 @@ type Val'
 -- Inside of it, we pick (Int, Bool) which needs "Right" constructor as well
 -- Therefore, finally,
 -- C 3 False <=> Right (Right (3,False))
+
+
+toVal' :: Val -> Val'
+toVal' (A i)   = Left i
+toVal' (B b)   = Right (Left b)
+toVal' (C i b) = Right (Right (i,b))
+
+toVal :: Val' -> Val
+toVal (Left i)              = A i
+toVal (Right (Left b))      = B b
+toVal (Right (Right (i,b))) = C i b
