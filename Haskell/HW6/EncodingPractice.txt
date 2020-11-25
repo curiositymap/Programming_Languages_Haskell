@@ -1,0 +1,35 @@
+data Either a b
+   = Left a
+   | Right b
+data Val
+   = A Int
+   | B Bool
+   | C Int Bool
+
+type Val'
+   = Either Int (Either Bool (Int,Bool))
+
+
+-- Example: Represent the items below in type Val'
+--
+-- A 2
+----- Either Int -- which is the first argument of type Val'
+----- In this case, "Left" data constructor is used.
+----- from data type Val, A is the data constructor for an Int, 2
+----- Therefore, finally,
+----- A 2 <=> Left 2
+
+-- B True
+----- (Either Bool (Int, Bool)) -- which is the second argument of type Val'
+----- which is why we need a data constructor "Right"
+----- Then, inside of it, we need to pick Bool not (Int, Bool)
+----- which is why we need a data constructor "Left"
+----- Therefore, finally,
+----- B True <=> Right (Left True)
+
+-- C 3 False
+-- In type Val' this corresponds to the second argument
+-- which is why "Right" data constructor is used.
+-- Inside of it, we pick (Int, Bool) which needs "Right" constructor as well
+-- Therefore, finally,
+-- C 3 False <=> Right (Right (3,False))
