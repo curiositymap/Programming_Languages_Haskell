@@ -15,7 +15,10 @@ import LambdaCalculus
 type Nat = Int
 
 -- | A simple data type with three cases.
-data Val = A Nat | B Bool | C Nat Bool
+data Val
+  = A Nat
+  | B Bool
+  | C Nat Bool
   deriving (Eq,Show)
 
 -- | An arbitrary function that pattern matches on Val.

@@ -6,6 +6,7 @@ These two lines above should be manually typed & loaded at the beginning of runn
 for some reason (maybe due to the ghci compatibility issues).
 
 -}
+
 module LambdaCalculus where
 
 import Data.Char (isNumber)
@@ -39,10 +40,6 @@ data Exp
 -- ** Syntactic sugar
 
 -- | Build an abstraction that takes two arguments.
--- Takes two variables as arguments
--- and the body of abstraction as expression
--- to produce a new expression that encodes the binary function
-
 abs2 :: Var -> Var -> Exp -> Exp
 abs2 x1 x2 e = Abs x1 (Abs x2 e)
 
@@ -55,11 +52,6 @@ abs4 :: Var -> Var -> Var -> Var -> Exp -> Exp
 abs4 x1 x2 x3 x4 e = Abs x1 (abs3 x2 x3 x4 e)
 
 -- | Build an application to apply a function to two arguments.
--- First Exp is the function we're applying
--- Second Exp is the argument
--- Third Exp is the second argument
--- Last Exp is the new Exp we're returning
-
 app2 :: Exp -> Exp -> Exp -> Exp
 app2 f e1 e2 = App (App f e1) e2
 
@@ -157,8 +149,6 @@ unsafeSub x arg (Abs y e) = Abs y (unsafeSub x arg e)
 safeSub :: Substitution
 safeSub x arg e@(Ref y) = if x == y then arg else e
 safeSub x arg   (App l r) = App (safeSub x arg l) (safeSub x arg r)
--- Rename y to y' and conduct the two substitutions
--- We got a helper function "nextFree" to figure out the name of free variable we're substituting
 safeSub x arg e@(Abs y b) = Abs y' (safeSub x arg (safeSub y (Ref y') b))
   where y' = nextFree y (Set.singleton x `Set.union` free e `Set.union` free arg)
 
@@ -174,91 +164,73 @@ nextFree x used = fromJust (find (flip Set.notMember used) vars)
 
 -- ** Small-step semantics
 
-step :: Substitution -> Exp -> Maybe Exp
-step sub (App (Abs x e) r) = Just (sub x r e)
-step sub (App l r)         = case step sub l of
-                              Just l' -> Just (App l' r)
-                              Nothing -> fmap (App l) (step sub r)
-step sub (Abs x e)         = fmap (Abs x) (step sub e)
-step _   (Ref _)           = Nothing
-
-steps :: Substitution -> Exp -> [Exp]
-steps sub e = e : case step sub e of
-                   Nothing -> []
-                   Just e' -> steps sub e'
-
-
 -- | A single-step reduction parameterized by a substitution algorithm.
--- type Step = Substitution -> Exp -> Maybe Exp
+type Step = Substitution -> Exp -> Maybe Exp
 
 -- | Do one step of normal-order reduction using the given substitution
 --   algorithm and return the result. If no redex is found, return Nothing.
 --
 --   The first case matches a redex and does a substitution. The rest of
 --   the cases implement a search for next redex.
--- stepN :: Step
--- stepN sub (App (Abs x e) r) = Just (sub x r e)
--- stepN sub (App l r)         = case stepN sub l of
---                                 Just l' -> Just (App l' r)
---                                 Nothing -> fmap (App l) (stepN sub r)
--- stepN sub (Abs x e)         = fmap (Abs x) (stepN sub e)
--- stepN _   (Ref _)           = Nothing
---
--- -- | Do one step of applicative-order reduction using the given substitution
--- --   algorithm and return the result. If no redex is found, return Nothing.
--- stepA :: Step
--- stepA sub (App (Abs x e) r)
---     | Just e' <- stepA sub e = Just (App (Abs x e') r)
---     | Just r' <- stepA sub r = Just (App (Abs x e) r')
---     | otherwise              = Just (sub x r e)
--- stepA sub (App l r)
---     | Just l' <- stepA sub l = Just (App l' r)
---     | otherwise              = fmap (App l) (stepA sub r)
--- stepA sub (Abs x e) = fmap (Abs x) (stepA sub e)
--- stepA _   (Ref _)   = Nothing
+stepN :: Step
+stepN sub (App (Abs x e) r) = Just (sub x r e)
+stepN sub (App l r)         = case stepN sub l of
+                                Just l' -> Just (App l' r)
+                                Nothing -> fmap (App l) (stepN sub r)
+stepN sub (Abs x e)         = fmap (Abs x) (stepN sub e)
+stepN _   (Ref _)           = Nothing
+
+-- | Do one step of applicative-order reduction using the given substitution
+--   algorithm and return the result. If no redex is found, return Nothing.
+stepA :: Step
+stepA sub (App (Abs x e) r)
+    | Just e' <- stepA sub e = Just (App (Abs x e') r)
+    | Just r' <- stepA sub r = Just (App (Abs x e) r')
+    | otherwise              = Just (sub x r e)
+stepA sub (App l r)
+    | Just l' <- stepA sub l = Just (App l' r)
+    | otherwise              = fmap (App l) (stepA sub r)
+stepA sub (Abs x e) = fmap (Abs x) (stepA sub e)
+stepA _   (Ref _)   = Nothing
 
 -- | Evaluate an expression to normal form using the given substitution
 --   algorithm and a step function. Return a list of expressions produced
 --   by each step of reduction. This list may be infinite if the expression
 --   does not reduce to normal form using the given step function.
--- steps :: Substitution -> Step -> Exp -> [Exp]
--- steps sub step e = e : case step sub e of
---                          Nothing -> []
---                          Just e' -> steps sub step e'
+steps :: Substitution -> Step -> Exp -> [Exp]
+steps sub step e = e : case step sub e of
+                         Nothing -> []
+                         Just e' -> steps sub step e'
 
 -- | Evaluate an expression to normal form using safe substitution and
 --   normal-order reduction. Note that this function will not terminate
 --   if the reduction never reaches a normal form!
-eval :: Substitution -> Exp -> Exp
-eval sub = last . steps sub
+eval :: Exp -> Exp
+eval = last . steps safeSub stepN
 
 -- | Evaluate an expression to normal form using unsafe substitution and
 --   normal-order reduction. Note that this function will not terminate
 --   if the reduction never reaches a normal form!
 unsafeEval :: Exp -> Exp
-unsafeEval = eval unsafeSub
-
-safeEval :: Exp -> Exp
-safeEval = eval safeSub
+unsafeEval = last . steps unsafeSub stepN
 
 -- | Print a reduction sequence for an expression using safe substitution
 --   and the given step function.
-printReduce :: Exp -> IO ()
-printReduce = mapM_ (putStrLn. pretty) . steps safeSub
+printReduce :: Step -> Exp -> IO ()
+printReduce step = mapM_ print . steps safeSub step
+
 -- | Print a normal-order reduction sequence for an expression.
--- printReduceN :: Exp -> IO ()
--- printReduceN = printReduce stepN
---
--- -- | Print an applicative-order reduction sequence for an expression.
--- printReduceA :: Exp -> IO ()
--- printReduceA = printReduce stepA
+printReduceN :: Exp -> IO ()
+printReduceN = printReduce stepN
+
+-- | Print an applicative-order reduction sequence for an expression.
+printReduceA :: Exp -> IO ()
+printReduceA = printReduce stepA
 
 
 -- ** Examples and tests
 
 -- | Variable capture examples from slide 17.
--- | (λxy. x) y u
-
 ex1, ex2 :: Exp
 ex1 = app2 (abs2 "x" "y" (Ref "x")) (Ref "y") (Ref "u")
 ex2 = Abs "x" (App (abs2 "y" "x" (App (Ref "y") (Ref "x"))) (Ref "x"))
@@ -331,11 +303,11 @@ or = abs2 "p" "q" (app3 if_ (Ref "p") (Ref "p") (Ref "q"))
 
 -- ** Church numerals
 
--- | λfx.x -- apply f to x 0 time
+-- | λfx.x
 zero :: Exp
 zero = abs2 "f" "x" (Ref "x")
 
--- | λfx.fx -- apply f to x 1 time
+-- | λfx.fx
 one :: Exp
 one = abs2 "f" "x" (App (Ref "f") (Ref "x"))
 
@@ -357,25 +329,19 @@ num n = abs2 "f" "x" (help n (Ref "x"))
   where help 0 e = e
         help n e = App (Ref "f") (help (n-1) e)
 
--- | λnfx.f(nfx) -- apply f to x n times and apply f one time afterwards
+-- | λnfx.f(nfx)
 succ :: Exp
 succ = abs3 "n" "f" "x" (App (Ref "f") (app2 (Ref "n") (Ref "f") (Ref "x")))
 
 -- | λnmfx.nf(mfx)
--- take arguments, n and m,
--- apply f to x (m) times and
--- apply f to the result n times
 add :: Exp
 add = abs4 "n" "m" "f" "x" (app2 (Ref "n") (Ref "f") (app2 (Ref "m") (Ref "f") (Ref "x")))
 
 -- | λnmf.n(mf)
--- apply m applications of f on x
--- apply n applications of (mfx)
 mult :: Exp
 mult = abs3 "n" "m" "f" (App (Ref "n") (App (Ref "m") (Ref "f")))
 
 -- | λn. n (λx.false) true
--- 
 isZero :: Exp
 isZero = Abs "n" (app2 (Ref "n") (Abs "x" false) true)
 

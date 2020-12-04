@@ -47,3 +47,7 @@ toVal :: Val' -> Val
 toVal (Left i)              = A i
 toVal (Right (Left b))      = B b
 toVal (Right (Right (i,b))) = C i b
+
+
+-- | Products (a.k.a. tuples)
+{- Equations for tuples -}

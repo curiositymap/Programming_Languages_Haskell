@@ -4,15 +4,7 @@ import Prelude hiding (print,and,or,not,pred,succ,fst,snd,either,length,sum,prod
 
 import DeBruijn
 
-{-
- (λxy. x) y u
-is equivalent to
 
-ex1, ex2 :: Exp
-ex1 = app2 (abs2 "x" "y" (Ref "x")) (Ref "y") (Ref "u")
-ex2 = Abs "x" (App (abs2 "y" "x" (App (Ref "y") (Ref "x"))) (Ref "x"))
-
--}
 --
 -- * Part 1: Nameless lambda calculus
 --
@@ -23,7 +15,7 @@ ex2 = Abs "x" (App (abs2 "y" "x" (App (Ref "y") (Ref "x"))) (Ref "x"))
 --   Abs (Ref 0)
 --
 ex1 :: Exp
-ex1 = App ((Ref x)(Abs (App ((Ref x) x (Ref x)))
+ex1 = Abs (App (Abs (Ref 0)) (Ref 0))
 
 -- | (λxy.xz) z z
 --
@@ -31,7 +23,7 @@ ex1 = App ((Ref x)(Abs (App ((Ref x) x (Ref x)))
 --   App (Ref 0) (Ref 0)
 --
 ex2 :: Exp
-ex2 = undefined
+ex2 = app2 (abs2 (App (Ref 1) (Ref 2))) (Ref 0) (Ref 0)
 
 -- | λy. (λxy.yx) y z
 --
@@ -39,7 +31,7 @@ ex2 = undefined
 --   Abs (App (Ref 1) (Ref 0))
 --
 ex3 :: Exp
-ex3 = undefined
+ex3 = Abs (app2 (abs2 (App (Ref 0) (Ref 1))) (Ref 0) (Ref 1))
 
 
 -- | Is the given nameless lambda calculus term a closed expression? That is,
@@ -58,7 +50,11 @@ ex3 = undefined
 --   True
 --
 closed :: Exp -> Bool
-closed = undefined
+closed = check 0
+  where
+    check d (Ref n)   = n < d
+    check d (Abs e)   = check (d+1) e
+    check d (App l r) = check d l && check d r
 
 
 --
@@ -76,7 +72,7 @@ closed = undefined
 --   True
 --
 setFst :: Exp
-setFst = undefined
+setFst = abs2 (app2 pair (Ref 1) (App snd (Ref 0)))
 
 -- | Write a lambda calculus function that replaces the second element in a
 --   Church-encoded pair. The first argument to the function is the new
@@ -89,7 +85,7 @@ setFst = undefined
 --   True
 --
 setSnd :: Exp
-setSnd = undefined
+setSnd = abs2 (app2 pair (App fst (Ref 0)) (Ref 1))
 
 
 --
@@ -123,13 +119,13 @@ perimeter (Rectangle l w) = 2 * l + 2 * w
 --   should be a function that takes a Church-encoded natural number as input
 --   and produces a Church-encoded shape as output.
 circleExp :: Exp
-circleExp = undefined
+circleExp = Abs (App inL (Ref 0))
 
 -- | Encode the rectangle constructor as a lambda calculus term. The term
 --   should be a function that takes two Church-encoded natural numbers as
 --   input and produces a Church-encoded shape as output.
 rectangleExp :: Exp
-rectangleExp = undefined
+rectangleExp = abs2 (App inR (app2 pair (Ref 1) (Ref 0)))
 
 -- | Convert a shape into a lambda calculus term. This function helps to
 --   illustrate how your encodings of the constructors should work.
@@ -139,15 +135,20 @@ encodeShape (Rectangle l w) = app2 rectangleExp (num l) (num w)
 
 -- | Encode the square function as a lambda calculus term.
 squareExp :: Exp
-squareExp = undefined
+squareExp = Abs (App inR (app2 pair (Ref 0) (Ref 0)))
 
 -- | Encode the area function as a lambda calculus term.
 areaExp :: Exp
-areaExp = undefined
+areaExp = app2 either
+    (Abs (app2 mult (app2 mult three (Ref 0)) (Ref 0)))
+    (Abs (app2 mult (App fst (Ref 0)) (App snd (Ref 0))))
 
 -- | Encode the perimeter function as a lambda calculus term.
 perimeterExp :: Exp
-perimeterExp = undefined
+perimeterExp = app2 either
+    (Abs (app2 mult (app2 mult two three) (Ref 0)))
+    (Abs (app2 add (app2 mult two (App fst (Ref 0)))
+                   (app2 mult two (App snd (Ref 0)))))
 
 
 -- | Some tests of your lambda calculus encodings.
