@@ -1,37 +1,3 @@
-{- Notes -}
--- I tried to connenct the concepts and apply Haskell to Church encoding Approach
--- Despite my numerous attempts, I couldn't wrap my head about the assignment.
--- I did my best to synthesize ideas and defined the functions, which is noted in the comment. However, there are some insufficient answers in the assignment.
--- After I get the feedback on the assignment, I will visit the OH to clearly understand the pertinent section.
-
-
-{- De Brujin's Conversion -}
-{-
-\x.\y. x y (\z. x y z)
-
-λλ ? ? (λ ? ? ?)
--- x: need to jump one lambda
-
-λλ 1 ? (λ ? ? ?) -- need to jump over one Lambda
-λλ 1 0 (λ ? ? ?) -- no need to jump, so it's zero
-
-another instance of x
-λλ 1 0 (λ 2 ? ?) -- since we need to jump over \z and \x
-λλ 1 0 (λ 2 1 ?) -- y jumps over \y
-λλ 1 0 (λ 2 1 0) -- z jumps over none of the abstraction
-
--- Is it important to determine the scope of each variable
--- Alpha equivalent expression in the same way
-
-\x.\y. x y (\z. x y z) y
-\a.\b. a b (\c. a b c) b
-
-These two can be turned into the same nameless lambda calculus: λλ 1 0 (λ 2 1 0) 0
-
-To check the equivalence, use De Brujin
-
--}
-
 module HW6 where
 
 import Prelude hiding (print,and,or,not,pred,succ,fst,snd,either,length,sum,product)
@@ -41,15 +7,6 @@ import DeBruijn
 import Data.Set (Set)
 import qualified Data.Set as Set
 
-{-
- (λxy. x) y u
-is equivalent to
-
-ex1, ex2 :: Exp
-ex1 = app2 (abs2 "x" "y" (Ref "x")) (Ref "y") (Ref "u")
-ex2 = Abs "x" (App (abs2 "y" "x" (App (Ref "y") (Ref "x"))) (Ref "x"))
-
--}
 --
 -- * Part 1: Nameless lambda calculus
 --
@@ -59,7 +16,9 @@ ex2 = Abs "x" (App (abs2 "y" "x" (App (Ref "y") (Ref "x"))) (Ref "x"))
 --   Abs (Ref 0)
 --
 ex1 :: Exp
-ex1 = App ((Ref 0)(Abs (App ((Ref 2) (Ref 1) (Ref 1))))
+ex1 = Abs (App (Abs (Ref 0)) (Ref 0))
+-- the body of abstraction: the whole thing ((λx.x) x) --> Abs ()
+-- Inside the abstraction, there's an app (λx.x) --> App (Abs (Ref 0)) (Ref 0)
 
 -- | (λxy.xz) z z
 --
@@ -68,8 +27,11 @@ ex1 = App ((Ref 0)(Abs (App ((Ref 2) (Ref 1) (Ref 1))))
 --
 
 ex2 :: Exp
-ex2 = app2 (abs2 (App (Ref 1)(Ref 2)))(Ref 0)(Ref 0)
-
+ex2 = app2 (abs2 (App (Ref 1) (Ref 2)))(Ref 0)(Ref 0)
+-- Application with two arguments: z and z --> app2
+-- the body of abstraction has two references: λxy. --> abs2
+-- Inside the abstraction, there is an application with xz --> App (Ref 1) (Ref 2)
+-- z is free variable outside of the scope of abstraction, so (Ref 0)
 
 
 -- | λy. (λxy.yx) y z
@@ -78,8 +40,10 @@ ex2 = app2 (abs2 (App (Ref 1)(Ref 2)))(Ref 0)(Ref 0)
 --   Abs (App (Ref 1) (Ref 0))
 --
 ex3 :: Exp
-ex3 = app2 (Abs ((abs2(App (Ref 0)(Ref 1)))) (Ref 0)(Ref 1)
-
+ex3 = Abs (app2 (abs2 (App (Ref 0) (Ref 1)))  (Ref 0) (Ref 1))
+-- Abstraction with λy.
+-- The body of abstraction is (λxy.yx) y z --> Application with two references: y and z
+-- Inside the application, there is an abstraction with two references: λxy.
 
 -- | Is the given nameless lambda calculus term a closed expression? That is,
 --   does it contain no free variables?
@@ -96,15 +60,7 @@ ex3 = app2 (Abs ((abs2(App (Ref 0)(Ref 1)))) (Ref 0)(Ref 1)
 --   >>> closed (Abs (App (Abs (App (Ref 0) (Ref 1))) (Ref 0)))
 --   True
 --
-free :: Exp -> Set Var
-free (Ref 0)     = Abs (Ref 0)
-free (App (Abs (Ref 0) (Ref 1))) = Set.union (Abs (Ref 0)) (Abs (Ref 1))
 
--- | Is this lambda calculus term closed?
-closed :: Exp -> Bool
-closed = Set.null . free
-
-{- Different implementation -}
 closed :: Exp -> Bool
 closed = check 0
   where
@@ -114,26 +70,14 @@ closed = check 0
 
 
 -- d is a depth;
--- reference is smalleres than depth
--- The reason why we get additional when we add an abstraction
-
+-- reference is smaller than depth
+-- The reason why we get additional 1 when we add an abstraction is shown below:
+{-
 0 -- free
  λ0 -- closed
  1    -- free
 λ1  -- another layer of abstraction
- λλ1 --
-
-
-λ 0 1 2 (λ 0 1 2 3) 
-λx. x y z (λy. y x w z)  -- y and w should point at the same variable
-
-1 corresponds to y
-2 in the second one corresponds to y
-
-what variable name you check is up to you,
-but if they're point to the same place, use the same variable 
-
-
+ -}
 
 
 
@@ -175,25 +119,9 @@ Try write a function that takes a pair and changes the first element
 --   True
 --
 
-{-
-\xy.(pair x (snd y)) 
-λλ (pair ? (snd ?))
 
-λλ (pair ? (snd ?)) 
-λxys.sxy 
-
-
-Approach the simplest one --> some redexes in the expression
-A pair is a function. It is a shorthand for
-
-:{
---     eval (app2 pair true (num 3)) ==
---     eval (app2 setFst true (app2 pair (num 2) (num 3)))
---   :}
-
--}
 setFst :: Exp
-setFst = Abs "t" (App (Ref "t") true)
+setFst = abs2 (app2 pair (Ref 1) (App snd) (Ref 0)))
 
 -- | Write a lambda calculus function that replaces the second element in a
 --   Church-encoded pair. The first argument to the function is the new
@@ -206,71 +134,76 @@ setFst = Abs "t" (App (Ref "t") true)
 --   True
 --
 setSnd :: Exp
-setSnd = Abs "t" (App (Ref "t") false)
+setSnd = abs2 (app2 pair (App fst (Ref 0)) (Ref 1))
 
 
 --
 -- * Part 3: Church encoding a Haskell program
 --
 
+{- Prof OH Advice
 
-We're going to use "Sum"
-Use inL and inR
+We're going to use "Sum" with inL and inR
 
 Sum works as Either
 
-Circle -- inL Nat
-Rectangle -- inR (Nat, Nat)
+STEP 1. Named Lambda Calculus Translation
+   Circle -- inL Nat
+   Rectangle -- inR (Nat, Nat)
 
-λr.   inL r            -- this is Circle
-λl w. inR (pair l w) -- this is Rectangle
+   λr.   inL r            -- this is Circle
+   λl w. inR (pair l w)   -- this is Rectangle
 
-Let's translate it into a nameless lambda calculus
+STEP 2. Let's translate it into a nameless lambda calculus
 
-λ inL 0
-λλ inR (pair 1 0) -- l needs to jump over one lambda
+   λ inL 0
+   λλ inR (pair 1 0) -- l needs to jump over one lambda
 
-Or we could just use λ inR (pair 0 0)
-
-
-Let's turn them into Haskell w/o Pattern matching
-
-area :: Either Nat (Nat, Nat) -> Nat
-
-However, we're going to use Shape data type.
-We can use the data constructors, Circle and Rectangule
+   Alternatively, we could just use λ inR (pair 0 0)
 
 
-area s = either (\r -> pi * r * r) (\p -> fst p * snd p) s
-area = either (\r -> pi * r * r) (\p -> fst p * snd p)
+STEP 3. Let's turn them into Haskell w/o Pattern matching
 
-Named Lambda Calculus
-either (λr. mult (mult 3 r)  r) (λp. mult (fst p) (snd p))
+   area :: Either Nat (Nat, Nat) -> Nat
 
-Nameless Lambda Calculus
-either (λ mult (mult three 0) 0) (λ mult (fst 0) (snd 0))
+   However, we're going to use Shape data type.
+   We can use the data constructors, "Circle" and "Rectangle"
 
-Translate this into Haskell encoding -- using Apps and Exp
+   area s = either (\r -> pi * r * r) (\p -> fst p * snd p) s
 
-{- GO over HaskellToChurch file -- is the implementation of the code in Pg 35
+   Alternatively, we can omit s in both sides.
+   area = either (\r -> pi * r * r) (\p -> fst p * snd p)
 
-inL -- circle
-inR -- square
+BONUS:
+      1. Named Lambda Calculus
+      either (λr. mult (mult 3 r)  r) (λp. mult (fst p) (snd p))
 
-We're using Case 3 / Either
+      2. Nameless Lambda Calculus
+      either (λ mult (mult three 0) 0) (λ mult (fst 0) (snd 0))
 
-foo (A n)   = n 
-foo (B b)   = if b then 0 else 1
+STEP 4. Finally, translate this into Haskell encoding -- using Apps and Exp
+
+
+* Tips: go over HaskellToChurch file (the implementation of the code in Pg 35).
+
+        inL -- circle
+        inR -- square
+
+       In this practice, we're using Case 3 / Either
+       
+        foo (A n)   = n 
+        foo (B b)   = if b then 0 else 1
  foo (C n b) = if b then 0 else n 
-foo v = case v of 
-  A n -> ... 
-  B b -> ... 
-  C n b -> ... 
+        foo v = case v of 
+          A n -> ... 
+          B b -> ... 
+          C n b -> ... 
 
-λx. f x is equivalent to writing f(x)
-λx. f x <=> f
+        λx. f x is equivalent to writing f(x)
+        λx. f x <=> f
 
 -}
+
 -- | Pretend Haskell's Int is restricted to Nats.
 type Nat = Int
 
@@ -298,13 +231,13 @@ perimeter (Rectangle l w) = 2 * l + 2 * w
 --   should be a function that takes a Church-encoded natural number as input
 --   and produces a Church-encoded shape as output.
 circleExp :: Exp
-circleExp = Abs(Ref 0)
+circleExp = Abs(App InL (Ref 0))
 
 -- | Encode the rectangle constructor as a lambda calculus term. The term
 --   should be a function that takes two Church-encoded natural numbers as
 --   input and produces a Church-encoded shape as output.
 rectangleExp :: Exp
-rectangleExp = abs2(app2 pair (Ref 0) (Ref 1))
+rectangleExp = abs2(App inR (app2 pair (Ref 1) (Ref 0)))
 
 -- | Convert a shape into a lambda calculus term. This function helps to
 --   illustrate how your encodings of the constructors should work.
@@ -314,24 +247,23 @@ encodeShape (Rectangle l w) = app2 rectangleExp (num l) (num w)
 
 -- | Encode the square function as a lambda calculus term.
 squareExp :: Exp
-squareExp = Abs "s" (app2 Abs (Ref 0) (Ref 1))
+squareExp = Abs (App inR (app2 pair (Ref 0)(Ref 0)))
 
 -- | Encode the area function as a lambda calculus term.
 areaExp :: Exp
-areaExp = app2 Either(
+areaExp = app2 either(
           (Abs "c" (app3 mult (num 3) (mult (Ref 0) (Ref 1))))
           (Abs "r" (app3 mult (Ref 0) (Ref 1)))
           )
--- Note: I'm not quite sure about the syntax of encoding,
--- but there are two cases (e.g., Circle and Rectangle), so I used Either data type.
 
 
 -- | Encode the perimeter function as a lambda calculus term.
 perimeterExp :: Exp
-perimeterExp = app2 Either(
-               (Abs "c" (app3 mult (num 3) (Ref 0)))
-               (Abs "r" (app3 add (mult (num 2) (Ref 0)) (mult (num 2)(Ref 1))))
-               )
+perimeterExp = app2 either(
+               (Abs (app2 mult (app2 mult two three) (Ref 0)))
+               (Abs (app2 add (app2 mult two (App fst (Ref 0)))
+                              (app2 mult two (App snd (Ref 0))))))
+
 
 -- | Some tests of your lambda calculus encodings.
 --
@@ -373,52 +305,3 @@ perimeterExp = app2 Either(
 --
 checkEval :: Nat -> Exp -> Bool
 checkEval n e = num n == eval e
-
-
-{- Additional Part -}
-
--- | Build an abstraction that takes four arguments.
-abs5 :: Exp -> Exp
-abs5 = abs4 . Abs
-
--- | λxyzws.sxyzw
-tuple4 :: Exp
-tuple4 = abs5 "x" "y" "z" "w" "s" (app4 (Ref "s") (Ref "x") (Ref "y") (Ref "z") (Ref "w"))
-
--- | λt.t(λxyzw.x)
-sel14 :: Exp
-sel14 = Abs "t" (App (Ref "t") (abs4 "x" "y" "z" "w" (Ref "x")))
-
--- | λt.t(λxyzw.y)
-sel24 :: Exp
-sel24 = Abs "t" (App (Ref "t") (abs4 "x" "y" "z" "w"(Ref "y")))
-
--- | λt.t(λxyzw.z)
-sel34 :: Exp
-sel34 = Abs "t" (App (Ref "t") (abs4 "x" "y" "z" "w" (Ref "z")))
-
--- | λt.t(λxyzw.w)
-sel44 :: Exp
-sel44 = Abs "t" (App (Ref "t") (abs4 "x" "y" "z" "w"(Ref "w")))
-
-
--- | λfghiu.ufghi
-
-case4 :: Exp
-case4 = tuple4
-
--- | λxfghi.fx
-in14 :: Exp
-in14 = abs4 "x" "f" "g" "h" "i" (App (Ref "f") (Ref "x"))
-
--- | λxfghi.gx
-in24 :: Exp
-in24 = abs4 "x" "f" "g" "h" "i" (App (Ref "g") (Ref "x"))
-
--- | λxfghi.hx
-in34 :: Exp
-in34 = abs4 "x" "f" "g" "h" "i" (App (Ref "h") (Ref "x"))
-
--- | λxfghi.ix
-in44 :: Exp
-in44 = abs4 "x" "f" "g" "h" "i" (App (Ref "i") (Ref "x"))
