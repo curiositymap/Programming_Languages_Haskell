@@ -1,0 +1,51 @@
+CS 581 Programming Languages
+<Final Exam Overview>
+
+Materials Covered:
+- HW 1/2/3/4/5/6
+- Quiz 1/2/3
+- Exercises
+- Practice Problems
+1. Church Encoding
+2. Denotational Semantics
+- Midterm
+
+- High-level concepts:
+1-1. How do you define the semantics of a programming Language?
+1-2. How do you define the syntax of a programming language?
+2-1. What is lambda calculus?
+2-2. Does it matter whether you evaluate a lambda calculus term with applicative- vs. normal order reduction?
+3-1. Why should you care about applicative- vs. normal-order reduction?
+3-2. Does it matter which one you choose?
+
+ Concepts Covered:
+
+ - Functional Programming
+ 1. Define a Haskell value or function from a specification
+ 2. Determine the type of an expression given the types of any relevant functions and values.
+ 3. Construct an expression of the given type from the provided values.
+
+ - Syntax and Naming
+ 1. Given a grammar and program fragment, determine whether the program fragment can be generated from the grammar. If so, determine which syntactic category it belongs to.
+ 2. Given a grammar, implement the corresponding abstract syntax as a set of Haskell types and data types.
+ 3. Given an abstract syntax in Haskell, encode a program's AST as a Haskell value.
+ 4. Determine whether a use of a name is a declaration or reference.
+
+ - Inference Rules and Operational Semantics
+ (1. Given a judgement defined using inference rules and a claim, construct a direct proof (i.e. proof tree) of the claim.)**
+ (2. Given a natural semantics of a language, write a proof tree showing the evaluation of a term.)**
+ 3. Given a structural operational semantics for a language defined using inference rules, write the reduction sequence of a term.
+
+ - Lambda Calculus
+ 1. Determine which variables are free and bound in an expression.
+ 2. Write the reduction sequence for a lambda calculus expression using normal-order or applicative-order reduction.
+ 3. Perform capture-avoiding (safe) substitution.
+ 4. Encode Haskell functions and values as lambda calculus expressions using Church Encoding.
+ 5. Convert to and from nameless lambda calculus using de Bruijin Indices.
+
+- Denotation Semantics and Domain Theory
+ (1. What elements are in a given semantic domain constructed using lifting, sums, and products?)**
+ 2. What is a good choice of semantic domain for a given language?
+ 3. Implement a simple denotational semantics in Haskell.
+
+ ** These items will not be asked in the final due to the formatting constraints. 
