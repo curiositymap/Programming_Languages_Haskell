@@ -33,11 +33,13 @@
 
 # (\x.(\y.x)) z -- is the first application/redex we can reduce
 # Substitute z for x in the body
+
 -> [(\y.z) u] -- now we have one redex
 
 # Substitute y for u in the body of the abstraction
-# There's no y in the body
+# There's no y in the body to substitute.
 # So we only have z
+
 -> z
 
 ## Parenthesis around the left-most application
@@ -55,7 +57,7 @@
 \x.(\y.y) z - there are two applications
    ---------
 -- \x is the abstraction and
--- \y.y is the body of the abstraction (abstractions extend far right)
+-- (\y.y) z is the body of the abstraction (abstractions extend far right)
 
 -> \x.z -- substitute z for any reference of y in the body of abstraction, y
 
