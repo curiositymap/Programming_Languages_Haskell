@@ -98,3 +98,109 @@ returns the final value of the counter.
           prog p = stmts p 0
 
 ----------------------------------------------------------}
+
+
+{--------------------------------------------------EXAMPLE3
+Exercise: Denotational Semantics - IMPERATIVE LANGUAGE
+
+
+STEP I. Define the syntax
+
+ <Syntax>
+
+      int  ::= (any integer)
+
+      reg  ::= `A` | `B` | `R`
+
+      expr ::= int
+            |  reg
+            |  expr + expr
+
+      test ::= expr <= expr
+            |  `not` test
+
+      stmt ::= reg := expr
+            |  `while` test `do` stmt
+            |  `begin` stmt* `end
+
+
+<Haskell Encoding>
+    data Reg = A | B | R
+      deriving (Eq,Show)
+
+    data Expr
+       = Lit Int
+       | Get Reg
+       | Add Expr Expr
+      deriving (Eq,Show)
+
+    data Test
+       = LTE Expr Expr
+       | Not Test
+      deriving (Eq,Show)
+
+    data Stmt
+       = Set Reg Expr
+       | While Test Stmt
+       | Begin [Stmt]
+      deriving (Eq,Show)
+
+<Semantics>
+-- | The current values of the registers.
+    type State = (Int, Int, Int)
+--- USE THE TUPLES
+--- SINCE WE ONLY HAVE THREE REGISTERS
+
+
+STEP II. Define the semantic domain
+
+-- How to set up a semantic domain?
+-- Semantic domains:
+--  * expr: State -> Int
+--  * test: State -> Bool
+--  * stmt: State -> State
+
+<Helper Functions>
+-- | An initial state, for convenience.
+init :: State
+init = (0,0,0)
+
+-- | Get the value of a register.
+get :: Reg -> State -> Int
+get A (a,_,_) = a
+get B (_,b,_) = b
+get R (_,_,r) = r
+
+-- | Set the value of a register.
+set :: Reg -> Int -> State -> State
+set A i (_,b,r) = (i,b,r)
+set B i (a,_,r) = (a,i,r)
+set R i (a,b,_) = (a,b,i)
+
+
+STEP III. Write Semantic/Valuation Functions
+
+-- | Valuation function for expressions.
+expr :: Expr -> State -> Int
+expr (Lit i)   = \s -> i
+expr (Get r)   = \s -> get r s
+expr (Add l r) = \s -> expr l s + expr r s
+
+-- | Valuation function for tests.
+test :: Test -> State -> Bool
+test (Not t)   = \s -> not (test t s)
+test (LTE l r) = \s -> expr l s <= expr r s
+
+-- | Valuation function for statements.
+stmt :: Stmt -> State -> State
+stmt (Set r e)   = \s -> set r (expr e s) s
+stmt (While t b) = \s -> if test t s
+                         then stmt (While t b) (stmt b s)
+                         else s
+stmt (Begin ss)  = \s -> stmts ss s
+-- stmt (Begin ss)  = \s -> foldl (flip stmt) s ss
+
+-- | Helper function for executing a sequence of statements.
+stmts :: [Stmt] -> State -> State
+stmts []    s = s
+stmts (h:t) s = stmts t (stmt h s)
