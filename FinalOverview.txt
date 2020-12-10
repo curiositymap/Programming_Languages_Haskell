@@ -2,13 +2,13 @@ CS 581 Programming Languages
 <Final Exam Overview>
 
 Materials Covered:
-- HW 1/2/3/4/5/6
-- Quiz 1[x]/2/3
+- HW 1[x]/2[x]/3[x]/4[x]/5[x]/6
+- Quiz 1[x]/2[x]/3[x]
 - Exercises
 - Practice Problems
 1. Church Encoding
 2. Denotational Semantics
-- Midterm
+- Midterm [x]
 
 - High-level concepts:
 1-1. How do you define the semantics of a programming Language?
@@ -35,7 +35,8 @@ Materials Covered:
  III. Inference Rules and Operational Semantics
  (1. Given a judgement defined using inference rules and a claim, construct a direct proof (i.e. proof tree) of the claim.)**
  (2. Given a natural semantics of a language, write a proof tree showing the evaluation of a term.)**
- 3. Given a structural operational semantics for a language defined using inference rules, write the reduction sequence of a term.
+ 3. Given a structural operational semantics for a language defined using inference rules,
+    write the reduction sequence of a term.
 
  IV. Lambda Calculus
  1. Determine which variables are free and bound in an expression.

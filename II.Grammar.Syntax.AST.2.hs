@@ -8,7 +8,7 @@ II. Syntax and Naming
 ----------------------------------------------------------}
 module HW4Part1 where
 
-{--------------------------------------------------EXAMPLE1
+{--------------------------------------------------EXAMPLE2
 HW4 - Part I. Encoding a grammar in Haskell
 
 Given a grammar describing the concrete syntax of a small PL,
@@ -69,7 +69,7 @@ data Stmt
 type Prog = [Stmt]
 
 
-{--------------------------------------------------EXAMPLE1
+{--------------------------------------------------EXAMPLE2
 HW4 - Part II. Encoding Abstract Syntax Tree in Haskell
 
 Determine whether each program below can be genearted by the grammar.

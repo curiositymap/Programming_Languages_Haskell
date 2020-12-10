@@ -3,8 +3,9 @@ Lambda Calculus - Beta Reduction
 Q1. (λx. x x) ((λx y. y x) z (λx. x))
 
 
-1-1. Normal-order reduction: Reduce the leftmost redex (top-level application)
-  (\x.x x) ((\xy.y x) z (\x.x))
+1-1. Normal-order reduction:
+     Reduce the leftmost redex (top-level application)
+     (\x.x x) ((\xy.y x) z (\x.x))
 
 -- De-sugaring: remove the syntactic sugar
 -- \xyz.f is equivalent to \x.\y.\z.f
@@ -15,19 +16,21 @@ Q1. (λx. x x) ((λx y. y x) z (λx. x))
    ---------------- [Abstractions extend far right]
 -> (\y.(y z) (\x.x)) ((\x.(\y.y x)) z (\x.x))
    ----------------
--> (\x.x z) ((\x.(\y.y x)) z (\x.x))
-   --------
+-> ((\x.x) z) ((\x.(\y.y x)) z (\x.x))
+   ---------
 -> z ((\x.(\y.y x)) z (\x.x))
        --------------
 -> z  (\y.y z (\x.x))
       ---------------
--> z  (\x.x z)
+-> z  ((\x.x) z)
       --------
 -> z z
 
 
-1-2. Applicative-order reduction: Reduce the leftmost of the innermost redexes
-  (\x.x x) ((\xy.y x) z (\x.x))
+1-2. Applicative-order reduction:
+     Reduce the leftmost of the innermost redexes
+
+     (\x.x x) ((\xy.y x) z (\x.x))
 
 -- Desugaring: remove the syntactic sugar
 -- \xyz.f is equivalent to \x.\y.\z.f
@@ -45,7 +48,7 @@ Q1. (λx. x x) ((λx y. y x) z (λx. x))
 
 Q2. (λxyz.(x z)) (λz.z) ((λy.y) (λz.z)) x
 
-(((λxyz. (x z)) (λz. z)) ((λy. y) (λz. z))) x
+ (((λxyz. (x z)) (λz. z)) ((λy. y) (λz. z))) x
 ----------------------[Redex 1]
                          ------------------[Redex 2]
 -- There are TWO Redexes
@@ -54,23 +57,25 @@ Q2. (λxyz.(x z)) (λz.z) ((λy.y) (λz.z)) x
 
 2-1. Normal Order Reduction: Reduce the leftmost redex
     (\xyz.x z) (\z.z) ((\y.y)(\z.z)) x
-    -----------------
+    ----------------- safe substitution \z. -> \w.
 -> (\yw.(\z.z) w) ((\y.y)(\z.z)) x
-   -----------------------------
+   ----------------------------- application is left-associative
 -> (\w.(\z.z) w) x
    ---------------
+->  (\z.z) x
+    --------
 -> x
 
 2-2. Applicative-order reduction: reduce the leftmost of innermost
     (\xyz.x z) (\z.z) ((\y.y)(\z.z)) x
-    -----------------
+    ----------------- safe substitution \z. -> \w.
 -> (\yw.(\z.z) w) ((\y.y)(\z.z)) x
-        --------
+        -------- this is the left-most of the innermost redex
 -> (\yw.w) ((\y.y)(\z.z)) x
            --------------[Redex 2: Applicative-order]
     ---------------------[Redex 1: Normal-order]
 -> (\yw.w)(\z.z)x
-   -------------
+   ------------
 -> (\w.w)x
    -------
 -> x
