@@ -80,12 +80,6 @@ set :: Reg -> Int -> State -> State
 set A i (_,b) = (i,b)
 set B i (a,_) = (a,i)
 
--- data Value
---   = LitI Int
---   | LitB Bool
---   | Error
---   deriving (Eq,Show)
--- -}
 
 
 
